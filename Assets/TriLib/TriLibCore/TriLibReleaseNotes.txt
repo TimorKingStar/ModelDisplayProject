@@ -1,0 +1,3 @@
+﻿2.2.6
+Changelog:
+-Added EnforceAlphaChannelTextures asset loader option. This option is enabled by default and fixes texture creation on WebGL when the UseUnityNativeTextureLoader option is disabled. 
