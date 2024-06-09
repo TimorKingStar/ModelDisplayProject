@@ -20,36 +20,48 @@ using ICSharpCode.SharpZipLib.Zip;
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
-    string url = @"C:\Users\Administrator\Desktop\WorkSpace\Cube\Cube.zip";
-
+    string url ;
+    string currentFilePath;
     private void Start()
-    {
-        LoadModel(url);
+    {   
+        url = "file://"+ Application.dataPath + "/Art/Cube.zip";
+        Debug.Log(url);
+        DownModeFromWeb(url); 
     }
 
-    public void DownModeFromWeb(string webUrl)
+    void RenderModel()
     {
-        HttpManager.Instance.DownLoadAssets(webUrl).OnComplate(c=>
-        {
-            Debug.Log(">>>>>>>>>> Download file surrce");
-            WriteFile(c,webUrl);
-
-        }).OnError(e=> { Debug.LogError(e); });
-    }
-
-    void LoadModel(string url)
-    {
-        string fileName = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(url)
-                          +"/Fbx/"+ FileUtils.GetFilenameWithoutExtension(url) +".fbx";
-        if (File.Exists(fileName))
+        if (File.Exists(currentFilePath))
         {
             var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions();
-            AssetLoader.LoadModelFromFile(fileName, OnLoad, OnMaterialLoad, OnProgress, 
+            AssetLoader.LoadModelFromFile(currentFilePath, OnLoad, OnMaterialLoad, OnProgress,
                 OnError, gameObject, assetLoaderOptions);
+
+            Debug.Log(">>>>>>>>>:Load Model Finished");
         }
         else
         {
-            DownModeFromWeb(url);
+            Debug.Log(">>>>>>>>>: 缺少模型文件---");
+        }
+    }
+
+    void DownModeFromWeb(string webUrl)
+    {
+        currentFilePath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(url)
+                          +"/Fbx/"+ FileUtils.GetFilenameWithoutExtension(url) +".fbx";
+
+        if (!File.Exists(currentFilePath))
+        {
+            HttpManager.Instance.DownLoadAssets(webUrl).OnComplate(c =>
+            {
+                Debug.Log(">>>>>>>>>> Download file surrce");
+                WriteFile(c, webUrl);
+
+            }).OnError(e => { Debug.LogError(e); });
+        }
+        else
+        {
+            RenderModel();
         }
     }
 
@@ -57,7 +69,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     {
         if (data != null)
         {
-            string pathDirectory = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(url);
+            string pathDirectory = Application.persistentDataPath;
             string filePath = pathDirectory + "/" + FileUtils.GetFilename(url);
             if (!Directory.Exists(pathDirectory))
             {
@@ -65,7 +77,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             }                        
 
             File.WriteAllBytes(filePath, data);
-            Debug.Log(">>>>>>>>>>>>>>>Write finished");
+            Debug.Log(">>>>>>>>>>>>>>>Write finished :"+ filePath);
             FastZip zip = new FastZip();
             Debug.Log(pathDirectory);    
             if (FileUtils.GetFileExtension(filePath)==".zip")
@@ -80,6 +92,8 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             {
                 File.Delete(filePath);
             }
+
+            RenderModel();
         }
         else
         {
