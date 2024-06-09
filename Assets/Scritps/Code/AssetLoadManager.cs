@@ -24,7 +24,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     string currentFilePath;
     private void Start()
     {   
-        url = "file://"+ Application.dataPath + "/Art/Cube.zip";
+        url = "file://"+ Application.streamingAssetsPath + "/Cube.zip";
         Debug.Log(url);
         DownModeFromWeb(url); 
     }
@@ -68,7 +68,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     void WriteFile(byte[]data,string url)
     {
         if (data != null)
-        {
+        {  
             string pathDirectory = Application.persistentDataPath;
             string filePath = pathDirectory + "/" + FileUtils.GetFilename(url);
             if (!Directory.Exists(pathDirectory))
@@ -78,7 +78,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
             File.WriteAllBytes(filePath, data);
             Debug.Log(">>>>>>>>>>>>>>>Write finished :"+ filePath);
-            FastZip zip = new FastZip();
+            FastZip zip = new FastZip(); 
             Debug.Log(pathDirectory);    
             if (FileUtils.GetFileExtension(filePath)==".zip")
             {
@@ -109,6 +109,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
         var go=  loaderContext.RootGameObject;
+        go.transform.rotation = Quaternion.Euler(45f,45f,45f);
         go.SetActive(true);
     }
 
