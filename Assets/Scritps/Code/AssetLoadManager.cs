@@ -16,9 +16,6 @@ using ICSharpCode.SharpZipLib.Zip;
  4. 如果有相机的话，配置初始相机的位置。
  5. 如果有动画的话，将动画也放到场景中来。
 
-
-
-
     1.点击哪个物体，哪个物体就进行旋转？？？
 
 
@@ -33,7 +30,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     string currentFilePath;
     private void Start()
     {   
-        url = "file://"+ Application.streamingAssetsPath + "/Cube.zip";
+        url = "file://"+ Application.streamingAssetsPath + "/Geo.zip";
         Debug.Log(url);
         DownModeFromWeb(url); 
     }
@@ -118,7 +115,15 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
         var go=  loaderContext.RootGameObject;
-        go.transform.rotation = Quaternion.Euler(45f,45f,45f);
+
+        foreach (var g in loaderContext.GameObjects)
+        {
+            if (g.Value.name=="CameraPosition")
+            {
+                //g.Value.transform.position
+            }
+        }
+        // go.transform.rotation = Quaternion.Euler(45f,45f,45f);
         go.SetActive(true);
     }
 

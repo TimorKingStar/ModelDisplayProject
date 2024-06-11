@@ -7,7 +7,7 @@ public class Test : MonoBehaviour
     
     void Start()
     {
-        Debug.Log(">>>>>>>>>>> TEST RUN SPEED");
+        GetComponent<Animation>().Play();
     }
  
 }
