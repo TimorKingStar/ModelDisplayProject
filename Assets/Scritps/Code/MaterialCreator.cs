@@ -4,19 +4,24 @@ using UnityEngine;
 
 public class MaterialCreator : MonoBehaviour
 {
-    public Shader shader;
+    Shader shader;
     Material currentMat;
-    public GameObject cube;
-    public Texture texture;
-    private void Start()
+
+    public void InitMaterial(Texture texture = null)
     {
-        cube.GetComponent<Renderer>().material = CreateMaterialFactor(texture);
+        shader = GameManager.Instance.GetShader();
+        GetComponent<Renderer>().material = CreateMaterialFactor(texture);
     }
 
-    public Material CreateMaterialFactor(Texture texture)
+    Material CreateMaterialFactor(Texture texture = null)
     {
+        shader = GameManager.Instance.GetShader(); ;
         currentMat = new Material(shader);
-        currentMat.SetTexture("_MainTex", texture);
+        if (texture != null)
+        {
+            currentMat.SetTexture("_MainTex", texture);
+        }
+
         SetOutLineState(true);
         SetAlpha(0.5f);
         return currentMat;
@@ -24,7 +29,6 @@ public class MaterialCreator : MonoBehaviour
 
     public void SetOutLineState(bool state, float width = 0.2f)
     {
-        Debug.Log(state);
         currentMat.SetInt("_EnableOutLine", state ? 1 : 0);
         currentMat.SetFloat("_OutLineWidth", width);
         currentMat.SetColor("_OutLineColor", Color.black);
@@ -35,20 +39,5 @@ public class MaterialCreator : MonoBehaviour
         Debug.Log(alpha);
         currentMat.SetFloat("_AlphaScale", alpha);
     }
-
-    public float alpha;
-    public bool state;
-    private void OnGUI()
-    {
-        if (GUILayout.Button("Alpha"))
-        {
-            SetAlpha(alpha);
-        }
-
-        if (GUILayout.Button("OutLine"))
-        {
-            SetOutLineState(state);
-        }
-    }
-
+    
 }

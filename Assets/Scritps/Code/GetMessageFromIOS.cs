@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.InteropServices;
 
 public class GetMessageFromIOS : MonoBehaviour
 {
@@ -10,12 +11,15 @@ public class GetMessageFromIOS : MonoBehaviour
         cube = transform.GetChild(0).gameObject;
     }
 
+     [DllImport("__Internal")]
+     private static extern void CallObjCFunc(string funcName);
     //游戏物体名称：GetMessageFromIOS  方法名称和参数如下：
 
     public void SetModelStateBool(bool state)
     {
         cube.gameObject.SetActive(state);
     }
+
     public void SetModelStateString(string state)
     {
         if (state=="active")
@@ -27,6 +31,7 @@ public class GetMessageFromIOS : MonoBehaviour
             cube.gameObject.SetActive(false);
         }
     }
+
     public void SetModelStateFloat(float state)
     {
         if (state==1f)

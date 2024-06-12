@@ -10,7 +10,10 @@ public class InputManage : MonoBehaviour
     Vector2 moveDirection = new Vector2();
 
     public UnityEvent<Vector2> moveDirectionEvent;
-    public UnityEvent<float> touchZoomScaleEventl;
+    public UnityEvent<float> touchZoomScaleEvent;
+    public UnityEvent<float> outLineStateEvent;
+    public UnityEvent<float> modelAlphaStateEvent;
+
     void Update()
     {
         TouchZoom();
@@ -43,7 +46,7 @@ public class InputManage : MonoBehaviour
             scaleFactor = (Vector2.Distance(lastTouch_1.position, lastTouch_2.position)
                 - Vector2.Distance(currentTouch_1.position, currentTouch_2.position));
 
-            touchZoomScaleEventl?.Invoke(scaleFactor);
+            touchZoomScaleEvent?.Invoke(scaleFactor);
             lastTouch_1 = currentTouch_1;
             lastTouch_2 = currentTouch_2;
         }
@@ -51,14 +54,17 @@ public class InputManage : MonoBehaviour
 
     void Test()
     {
-        //#if UNITY_EDITOR
-        //        moveX = Input.GetAxis("Horizontal") * moveSpeed;
-        //        moveY = Input.GetAxis("Vertical") * moveSpeed;
-        //        moveDirection.x = moveX;
-        //        moveDirection.y = moveY;
-        //        moveDirectionEvent?.Invoke(moveDirection);
-        //        return;
-        //#endif
+#if UNITY_EDITOR
+        moveX = Input.GetAxis("Horizontal") ;
+        moveY = Input.GetAxis("Vertical") ;
+        moveDirection.x = moveX;
+        moveDirection.y = moveY;
+
+        Debug.Log("Move x :"+moveX);
+        Debug.Log("Move y :" + moveY);
+        moveDirectionEvent?.Invoke(moveDirection);
+        return;
+#endif
         moveX = Input.GetAxis("Mouse X");
         moveY = Input.GetAxis("Mouse Y") ;
     }
@@ -68,15 +74,7 @@ public class InputManage : MonoBehaviour
     /// </summary>
     void TouchSlider()
     {
-
-#if UNITY_EDITOR
-        moveX = Input.GetAxis("Horizontal");
-        moveY = Input.GetAxis("Vertical") ;
-        moveDirection.x = moveX;
-        moveDirection.y = moveY;
-        moveDirectionEvent?.Invoke(moveDirection);
-        return;
-#endif
+        
         if (Input.touchCount == 1)
         {
             if (Input.GetTouch(0).phase == TouchPhase.Moved)

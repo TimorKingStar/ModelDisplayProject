@@ -6,32 +6,28 @@ using UnityEngine;
 /// <summary>
 /// 管理相机运动事件
 /// </summary>
-public class GameManager : MonoBehaviour
+public class GameManager : MonoSingleton<GameManager>
 {
     public InputManage inputManage;
-    public GameObject target;
-    CameraController cameraController;
+    public CameraController cameraController;
     public LightController lightController;
-    private void Awake()
-    { 
-        cameraController = GetComponent<CameraController>();
-    }
-    private void Start()
+
+    public Shader currentShader;
+    public Shader GetShader()
     {
-        cameraController.SetCurrentMode(target);
+        return currentShader;
     }
     private void OnEnable()
     {
-        inputManage.touchZoomScaleEventl.AddListener(cameraController.ZoomInOut);
+        inputManage.touchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
         inputManage.moveDirectionEvent.AddListener(cameraController.RotateModel);
-        inputManage.moveDirectionEvent.AddListener(lightController.Rotate);
-
+       // inputManage.moveDirectionEvent.AddListener(lightController.Rotate);
     }
 
     private void OnDisable()
     {
-        inputManage.touchZoomScaleEventl.RemoveListener(cameraController.ZoomInOut);
+        inputManage.touchZoomScaleEvent.RemoveListener(cameraController.ZoomInOut);
         inputManage.moveDirectionEvent.RemoveListener(cameraController.RotateModel);
-        inputManage.moveDirectionEvent.RemoveListener(lightController.Rotate);
+        //inputManage.moveDirectionEvent.RemoveListener(lightController.Rotate);
     }
 }

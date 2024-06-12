@@ -4,24 +4,45 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+
     Camera mainCamera;
     private void Awake()
     {
-        mainCamera = GetComponent<Camera>();
+              mainCamera = GetComponent<Camera>();
+        _defaltPosition = mainCamera.transform.position;
+        _defaltQuaternion = mainCamera.transform.rotation;
+
     }
 
+    [SerializeField]
+    GameObject currentObj;
+    [SerializeField]
     Vector3 initPos;
     Quaternion initQua;
+
+    [SerializeField]
+    Vector3 _defaltPosition ;
+    Quaternion _defaltQuaternion;
 
     /// <summary>
     /// 设置相机信息
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="qua"></param>
-    public void SetCameraInfo(Vector3 pos, Quaternion qua)
+    public void SetCameraInfo(GameObject obj,Transform trans=null)
     {
-        initPos = pos;
-        initQua = qua;
+        if (trans != null)
+        {
+            initPos = trans.position;
+            initQua = trans.rotation;
+        }
+        else
+        {
+            initPos = _defaltPosition;
+            initQua = _defaltQuaternion;
+        }
+        currentObj = obj;
+        intervalDistance = Vector3.Distance(currentObj.transform.position, initPos);
         InitCameraInfo();
     }
 
@@ -51,27 +72,17 @@ public class CameraController : MonoBehaviour
         float viewValue = mainCamera.fieldOfView + value;
         mainCamera.fieldOfView = Mathf.Clamp(viewValue, minView, maxView);
     }
-
-    GameObject currentObj;
-
-    public void SetCurrentMode(GameObject obj)
-    {
-        currentObj = obj;
-    }
-
-     float rotationSpeed = 5f;
+    
+     float rotationSpeed = 10f;
      float maxVerticalAngle = 60f;
      float minVerticalAngle = -60f;
      float lerpSpeed = 200f;
     
     float targetRotationX = 0f;
     float targetRotationY = 0f;
-    float intervalDistance = 10;
+    [SerializeField] 
+    float intervalDistance;
 
-    public void SetCamera2TargetDis(float dis)
-    {
-        intervalDistance = dis;
-    }
 
     /// <summary>
     /// 相机围绕目标旋转

@@ -19,10 +19,20 @@ using ICSharpCode.SharpZipLib.Zip;
     1.点击哪个物体，哪个物体就进行旋转？？？
 
 
-
+    1. 速写默写，自带动画，放大缩小模型，旋转视窗，光源旋转，需要outLine效果。
+    2. 单组静物，自带动画，多种材质，视窗旋转放大缩小，光源旋转，需要outLine效果，需要透明效果。
+    3. 石膏结构，任意旋转，放大缩小观察，光源旋转，需要outLine效果。
+    4. 头部结构，任意旋转，放大缩小观察，光源旋转，分皮肤，肌肉，骨骼层级进行观察，需要outLine效果。
 
  */
 
+
+/*
+  模型里面带相机的话命名为：Camera
+  模型需要贴图，里面带一张 mainTexture
+  模型皮肤，肌肉，骨骼层级进行观察，每层命名为 Depth，或者 Depth_model，看以上两种哪个方便
+  模型可以带动画
+     */
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
@@ -30,11 +40,10 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     string currentFilePath;
     private void Start()
     {   
-        url = "file://"+ Application.streamingAssetsPath + "/Geo.zip";
-        Debug.Log(url);
+        url = @"file://"+Application.streamingAssetsPath + "/Cube.fbx";
         DownModeFromWeb(url); 
     }
-
+    
     void RenderModel()
     {
         if (File.Exists(currentFilePath))
@@ -54,7 +63,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     void DownModeFromWeb(string webUrl)
     {
         currentFilePath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(url)
-                          +"/Fbx/"+ FileUtils.GetFilenameWithoutExtension(url) +".fbx";
+                         +"/"+ FileUtils.GetFilename(url);
 
         if (!File.Exists(currentFilePath))
         {
@@ -73,9 +82,9 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     void WriteFile(byte[]data,string url)
     {
-        if (data != null)
+        if (data != null) 
         {  
-            string pathDirectory = Application.persistentDataPath;
+            string pathDirectory = Application.persistentDataPath+ "/"+ FileUtils.GetFilenameWithoutExtension(url); 
             string filePath = pathDirectory + "/" + FileUtils.GetFilename(url);
             if (!Directory.Exists(pathDirectory))
             {
@@ -84,20 +93,24 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
             File.WriteAllBytes(filePath, data);
             Debug.Log(">>>>>>>>>>>>>>>Write finished :"+ filePath);
-            FastZip zip = new FastZip(); 
-            Debug.Log(pathDirectory);    
-            if (FileUtils.GetFileExtension(filePath)==".zip")
-            {
-                zip.ExtractZip(filePath, pathDirectory, "");
-            }
-            else
-            {
-                Debug.LogError(">>>>>>>>>>> FileExtension dont is zip");
-            }
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+
+            #region 解压缩
+            //FastZip zip = new FastZip();  
+            //Debug.Log(pathDirectory);    
+            //if (FileUtils.GetFileExtension(filePath)==".zip")
+            //{
+            //    zip.ExtractZip(filePath, pathDirectory, "");
+            //}
+            //else
+            //{
+            //    Debug.LogError(">>>>>>>>>>> FileExtension dont is zip");
+            //}
+
+            //if (File.Exists(filePath))
+            //{
+            //    File.Delete(filePath);
+            //}
+            #endregion
 
             RenderModel();
         }
@@ -114,17 +127,14 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
-        var go=  loaderContext.RootGameObject;
+        var AllAnimation= loaderContext.RootModel.AllAnimations;
+        var currentMode=  loaderContext.RootGameObject;
 
-        foreach (var g in loaderContext.GameObjects)
-        {
-            if (g.Value.name=="CameraPosition")
-            {
-                //g.Value.transform.position
-            }
-        }
-        // go.transform.rotation = Quaternion.Euler(45f,45f,45f);
-        go.SetActive(true);
+        var fileReference= currentMode.AddComponent<FileReferenceBinding>();
+        fileReference.Init(loaderContext);
+        currentMode.transform.position = new Vector3(0, 1, 0);
+        currentMode.transform.rotation = Quaternion.Euler(45, 45, 45);
+        currentMode.SetActive(true);
     }
 
     private void OnProgress(AssetLoaderContext loaderContext, float progress)

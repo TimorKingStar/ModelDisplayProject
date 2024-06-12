@@ -40,7 +40,7 @@ Shader "Unlit/OutLine"
                 float4 pos : SV_POSITION;
                 float3 worldPos : TEXCOORD1;
                 float2 uv : TEXCOORD2;
-                SHADOW_COORDS(1)
+                SHADOW_COORDS(3)
             };
 
             v2f vert (appdata_base v)
@@ -96,7 +96,7 @@ Shader "Unlit/OutLine"
                 float4 pos : SV_POSITION;
                 float3 worldPos : TEXCOORD1;
                 float2 uv : TEXCOORD2;
-                SHADOW_COORDS(1)
+                SHADOW_COORDS(3)
             };
 
             v2f vert (appdata_base v)
@@ -142,17 +142,17 @@ Shader "Unlit/OutLine"
 
             struct v2f
             {
-                float4 vertex : SV_POSITION;
+                float4 pos : SV_POSITION;
             };
 
             v2f vert(appdata_base v)
             {
                 v2f o;
 
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 float3 worldnormal = normalize(mul((float3x3)UNITY_MATRIX_IT_MV, v.normal));
                 float2 viewNormal = TransformViewToProjection(worldnormal.xy);
-                o.vertex.xy += viewNormal * _OutLineWidth * 0.01 * saturate(_EnableOutLine);
+                o.pos.xy += viewNormal * _OutLineWidth * 0.01 * saturate(_EnableOutLine);
                 return o;
             }
 
