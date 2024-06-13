@@ -6,11 +6,9 @@ using System.Runtime.InteropServices;
 public class GetMessageFromIOS : MonoBehaviour
 {
     public GameObject cube;
-    private void Awake()
-    {
-        cube = transform.GetChild(0).gameObject;
-    }
-
+   
+   
+   
      [DllImport("__Internal")]
      private static extern void CallObjCFunc(string funcName);
     //游戏物体名称：GetMessageFromIOS  方法名称和参数如下：

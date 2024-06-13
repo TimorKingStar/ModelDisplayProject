@@ -20,14 +20,14 @@ public class GameManager : MonoSingleton<GameManager>
     private void OnEnable()
     {
         inputManage.touchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
-        inputManage.moveDirectionEvent.AddListener(cameraController.RotateModel);
+        //inputManage.moveDirectionEvent.AddListener(cameraController.RotateModel);
        // inputManage.moveDirectionEvent.AddListener(lightController.Rotate);
     }
 
     private void OnDisable()
     {
         inputManage.touchZoomScaleEvent.RemoveListener(cameraController.ZoomInOut);
-        inputManage.moveDirectionEvent.RemoveListener(cameraController.RotateModel);
+        //inputManage.moveDirectionEvent.RemoveListener(cameraController.RotateModel);
         //inputManage.moveDirectionEvent.RemoveListener(lightController.Rotate);
     }
 }

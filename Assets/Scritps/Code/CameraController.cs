@@ -43,6 +43,9 @@ public class CameraController : MonoBehaviour
         }
         currentObj = obj;
         intervalDistance = Vector3.Distance(currentObj.transform.position, initPos);
+        targetRotationX = currentObj.transform.eulerAngles.y;
+        targetRotationY = currentObj.transform.eulerAngles.x;
+
         InitCameraInfo();
     }
 
@@ -77,8 +80,10 @@ public class CameraController : MonoBehaviour
      float maxVerticalAngle = 60f;
      float minVerticalAngle = -60f;
      float lerpSpeed = 200f;
-    
+
+    [SerializeField]
     float targetRotationX = 0f;
+    [SerializeField]
     float targetRotationY = 0f;
     [SerializeField] 
     float intervalDistance;

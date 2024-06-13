@@ -18,7 +18,6 @@ using ICSharpCode.SharpZipLib.Zip;
 
     1.点击哪个物体，哪个物体就进行旋转？？？
 
-
     1. 速写默写，自带动画，放大缩小模型，旋转视窗，光源旋转，需要outLine效果。
     2. 单组静物，自带动画，多种材质，视窗旋转放大缩小，光源旋转，需要outLine效果，需要透明效果。
     3. 石膏结构，任意旋转，放大缩小观察，光源旋转，需要outLine效果。
@@ -36,11 +35,12 @@ using ICSharpCode.SharpZipLib.Zip;
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
+
     string url ;
     string currentFilePath;
     private void Start()
     {   
-        url = @"file://"+Application.streamingAssetsPath + "/Cube.fbx";
+        url = Application.streamingAssetsPath + "/Head.fbx";
         DownModeFromWeb(url); 
     }
     
@@ -48,7 +48,8 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     {
         if (File.Exists(currentFilePath))
         {
-            var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions();
+            var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true,false);
+
             AssetLoader.LoadModelFromFile(currentFilePath, OnLoad, OnMaterialLoad, OnProgress,
                 OnError, gameObject, assetLoaderOptions);
 
@@ -91,9 +92,10 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
                 Directory.CreateDirectory(pathDirectory);
             }                        
 
-            File.WriteAllBytes(filePath, data);
+            File.WriteAllBytes(filePath, data);         
             Debug.Log(">>>>>>>>>>>>>>>Write finished :"+ filePath);
 
+            
             #region 解压缩
             //FastZip zip = new FastZip();  
             //Debug.Log(pathDirectory);    
@@ -132,8 +134,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
         var fileReference= currentMode.AddComponent<FileReferenceBinding>();
         fileReference.Init(loaderContext);
-        currentMode.transform.position = new Vector3(0, 1, 0);
-        currentMode.transform.rotation = Quaternion.Euler(45, 45, 45);
+        currentMode.transform.localScale = new Vector3(10,10,10);
         currentMode.SetActive(true);
     }
 
@@ -144,7 +145,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     
     private void OnError(IContextualizedError obj)
     {
-        
+        Debug.Log(obj);
     }
 
     

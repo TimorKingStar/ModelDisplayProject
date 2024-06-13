@@ -5,7 +5,9 @@ using UnityEngine.Events;
 
 public class InputManage : MonoBehaviour
 {
+    [SerializeField]
     float moveX;
+    [SerializeField]
     float moveY;
     Vector2 moveDirection = new Vector2();
 
@@ -54,19 +56,11 @@ public class InputManage : MonoBehaviour
 
     void Test()
     {
-#if UNITY_EDITOR
-        moveX = Input.GetAxis("Horizontal") ;
-        moveY = Input.GetAxis("Vertical") ;
+        moveX = Input.GetAxis("Horizontal");
+        moveY = Input.GetAxis("Vertical");
         moveDirection.x = moveX;
         moveDirection.y = moveY;
-
-        Debug.Log("Move x :"+moveX);
-        Debug.Log("Move y :" + moveY);
         moveDirectionEvent?.Invoke(moveDirection);
-        return;
-#endif
-        moveX = Input.GetAxis("Mouse X");
-        moveY = Input.GetAxis("Mouse Y") ;
     }
 
     /// <summary>
@@ -74,7 +68,10 @@ public class InputManage : MonoBehaviour
     /// </summary>
     void TouchSlider()
     {
-        
+
+#if UNITY_EDITOR
+        Test();
+#endif
         if (Input.touchCount == 1)
         {
             if (Input.GetTouch(0).phase == TouchPhase.Moved)

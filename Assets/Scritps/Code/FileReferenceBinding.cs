@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TriLibCore;
 using TriLibCore.Interfaces;
 using UnityEngine;
+
 
 /*
     1. 速写默写，自带动画，放大缩小模型，旋转视窗，光源旋转，需要outLine效果。
@@ -33,18 +33,29 @@ public class FileReferenceBinding : MonoBehaviour
     public AnimationClip currentAnimClip;
     public float currentFrame;
 
+
     /*
      1. 展示不同层级在这里展示
      2. 播放动画也在这里播放
      3. UI层需要知道有多少个动画
          
      */
-
+    
     private void OnEnable()
     {
         GameManager.Instance.inputManage.outLineStateEvent.AddListener(SetOutLineState);
         GameManager.Instance.inputManage.modelAlphaStateEvent.AddListener(SetAlphaState);
+        GameManager.Instance.inputManage.moveDirectionEvent.AddListener(ModelRotate);
     }
+
+    Vector3 eulerRotate = new Vector3();
+    private void ModelRotate(Vector2 arg0)
+    {
+        eulerRotate.x = arg0.y; 
+        eulerRotate.y = arg0.x;
+        _rootModel.transform.Rotate(eulerRotate, Space.World);
+    }
+
     private void OnDisable()
     {
         try

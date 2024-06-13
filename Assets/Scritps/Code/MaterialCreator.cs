@@ -13,17 +13,14 @@ public class MaterialCreator : MonoBehaviour
         GetComponent<Renderer>().material = CreateMaterialFactor(texture);
     }
 
+
     Material CreateMaterialFactor(Texture texture = null)
     {
-        shader = GameManager.Instance.GetShader(); ;
         currentMat = new Material(shader);
         if (texture != null)
         {
             currentMat.SetTexture("_MainTex", texture);
         }
-
-        SetOutLineState(true);
-        SetAlpha(0.5f);
         return currentMat;
     }
 
@@ -36,7 +33,6 @@ public class MaterialCreator : MonoBehaviour
 
     public void SetAlpha(float alpha)
     {
-        Debug.Log(alpha);
         currentMat.SetFloat("_AlphaScale", alpha);
     }
     
