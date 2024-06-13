@@ -63,6 +63,7 @@ public class InputManage : MonoBehaviour
         moveDirectionEvent?.Invoke(moveDirection);
     }
 
+
     /// <summary>
     /// 滑动屏幕的时候，旋转模型或者灯光
     /// </summary>
@@ -72,6 +73,7 @@ public class InputManage : MonoBehaviour
 #if UNITY_EDITOR
         Test();
 #endif
+
         if (Input.touchCount == 1)
         {
             if (Input.GetTouch(0).phase == TouchPhase.Moved)

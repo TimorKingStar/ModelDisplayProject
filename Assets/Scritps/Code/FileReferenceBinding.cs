@@ -16,11 +16,12 @@ using UnityEngine;
 
 public class FileReferenceBinding : MonoBehaviour
 {
-    const string _cameraName = "Camera";
+    const string _cameraName = "CameraExport";
     const string _depthModeName = "Depth";
 
     [SerializeField]
     public Transform _cameraTrans;
+
     [SerializeField]
     public GameObject _rootModel;
 
@@ -92,27 +93,28 @@ public class FileReferenceBinding : MonoBehaviour
     /// </summary>
     public List<GameObject> _depthModel =new List<GameObject>();
 
-    public void Init(AssetLoaderContext loaderContext)
+    public Vector3 euler;
+    public void Init(AssetLoaderContext loaderContext, Texture baseColor, Texture normalColor, Texture roughNess)
     {
         _rootModel = loaderContext.RootGameObject;
        _allAnimClip = loaderContext.RootModel.AllAnimations;
         _findAnim = _rootModel.TryGetComponent(out _anim);
-
-        Texture _mainTexture = null;
+ 
         foreach (var lt in loaderContext.LoadedTextures)
         {
-            if (lt.Key.Name=="_MainTexture")
-            {
-                _mainTexture = lt.Value.UnityTexture;   
-            }
+            Debug.Log("texture: "+lt.Key.Name);
         }
 
         foreach (var m in loaderContext.GameObjects)
         {
             if (m.Key.Name== _cameraName)
             {
-                _cameraTrans = m.Value.transform;
+               // _cameraTrans = m.Value.transform;
+                //_cameraTrans.transform.Rotate(Vector3.up, 180f,Space.Self);
+                euler = m.Key.LocalRotation.eulerAngles;
+                Debug.Log("euler: " + euler.ToString());
             }
+
 
             if (m.Key.Name == _depthModeName)
             {
@@ -125,14 +127,13 @@ public class FileReferenceBinding : MonoBehaviour
                 var mat= m.Value.AddComponent<MaterialCreator>();
 
                 //ÔÝÇÒÐ´null
-                mat.InitMaterial(_mainTexture); 
+                mat.InitMaterial(baseColor, normalColor, roughNess); 
                 materialCreators.Add(mat);
             }
         }
 
         GameManager.Instance.cameraController.SetCameraInfo(_rootModel, _cameraTrans);
-        SetAlphaState(1);
-        SetOutLineState(0);
+        
     }
 
 }

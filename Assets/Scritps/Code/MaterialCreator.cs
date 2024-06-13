@@ -5,22 +5,26 @@ using UnityEngine;
 public class MaterialCreator : MonoBehaviour
 {
     Shader shader;
+    [SerializeField]
     Material currentMat;
 
-    public void InitMaterial(Texture texture = null)
+    public void InitMaterial(Texture baseColor,Texture normalColor,Texture roughNess )
     {
-        shader = GameManager.Instance.GetShader();
-        GetComponent<Renderer>().material = CreateMaterialFactor(texture);
+        currentMat = null; 
+        currentMat = new Material( GameManager.Instance.GetMaterial());
+        currentMat.name = gameObject.name;
+        GetComponent<Renderer>().material = CreateMaterialFactor(baseColor, normalColor, roughNess);
     }
-
-
-    Material CreateMaterialFactor(Texture texture = null)
+     
+    Material CreateMaterialFactor(Texture baseColor, Texture normalColor, Texture roughNess)
     {
-        currentMat = new Material(shader);
-        if (texture != null)
-        {
-            currentMat.SetTexture("_MainTex", texture);
-        }
+   
+        if (baseColor != null)
+            currentMat.SetTexture("_MainTex", baseColor);
+        if (normalColor != null)
+            currentMat.SetTexture("_BumpMap", normalColor);
+        if (roughNess != null)
+            currentMat.SetTexture("_SpecGlossMap", roughNess);
         return currentMat;
     }
 

@@ -5,52 +5,45 @@ using System.Runtime.InteropServices;
 
 public class GetMessageFromIOS : MonoBehaviour
 {
-    public GameObject cube;
-   
-   
-   
+    
      [DllImport("__Internal")]
      private static extern void CallObjCFunc(string funcName);
     //游戏物体名称：GetMessageFromIOS  方法名称和参数如下：
+    float offset;
+    Vector2 dir = new Vector2();
+    float dirX, dirY;
 
-    public void SetModelStateBool(bool state)
+    public void SetModelurl(string url)
     {
-        cube.gameObject.SetActive(state);
+        AssetLoadManager.Instance.DownModeFromWeb(url);
+    }
+    
+    //方法名：SetLightMoveDir 
+    public void SetLightMoveDir(string x,string y)
+    {
+        if (float.TryParse(x, out dirX) && float.TryParse(y, out dirY))
+        {
+            dir.x = dirX;
+            dir.y = dirY;
+            GameManager.Instance.lightController.Rotate(dir);
+        }
+        else
+        {
+            Debug.Log(">>>>>>>Get ios SetLightMoveDir data error");
+        }
+        
     }
 
-    public void SetModelStateString(string state)
+    public void SetLightMoveOffset(string o)
     {
-        if (state=="active")
+        if (float.TryParse(o, out offset))
         {
-            cube.gameObject.SetActive(true);
+            GameManager.Instance.lightController.SetOffSet(offset);
         }
-        if (state == "close")
+        else
         {
-            cube.gameObject.SetActive(false);
-        }
-    }
+            Debug.Log(">>>>>>>Get ios SetLightMoveOffset data error");
 
-    public void SetModelStateFloat(float state)
-    {
-        if (state==1f)
-        {
-            cube.gameObject.SetActive(true);
-        }
-        if (state == 0)
-        {
-            cube.gameObject.SetActive(false);
         }
     }
-    public void SetModelStateVector2(Vector2 state)
-    {
-        if (state.x >0f && state.y>0f)
-        { 
-            cube.gameObject.SetActive(true);
-        }
-        if (state.x <= 0f && state.y <= 0f)
-        {
-            cube.gameObject.SetActive(false);
-        }
-    }
-
 }

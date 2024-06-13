@@ -12,10 +12,10 @@ public class GameManager : MonoSingleton<GameManager>
     public CameraController cameraController;
     public LightController lightController;
 
-    public Shader currentShader;
-    public Shader GetShader()
+    public Material currentMaterial;
+    public Material GetMaterial()
     {
-        return currentShader;
+        return currentMaterial;
     }
     private void OnEnable()
     {
