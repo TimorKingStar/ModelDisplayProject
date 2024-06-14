@@ -36,7 +36,6 @@ using ICSharpCode.SharpZipLib.Zip;
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
 
-     
     string currentModelPath;
     string currentTexturePath;
     
