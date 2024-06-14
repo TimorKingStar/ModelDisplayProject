@@ -47,13 +47,6 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     public Texture2D _roughNess;
     public Texture2D _normalColor;
 
-    //private void Start()
-    //{
-    //    url = Application.streamingAssetsPath + "/Geo.zip";
-       
-    //    DownModeFromWeb(url);
-    //}
-
     public  void DownModeFromWeb(string webUrl)
     {
         if (currentModel!=null)
@@ -204,7 +197,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     private void OnProgress(AssetLoaderContext loaderContext, float progress)
     {
-        Debug.Log(progress);
+        GetMessageFromIOS.LoadModelProgress(FileUtils.GetFilenameWithoutExtension(loaderContext.Filename), progress.ToString()); 
     }
     
     private void OnError(IContextualizedError obj)

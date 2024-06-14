@@ -173,7 +173,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 57
   orthographic: 0
@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 775f054421001c04483fb4cf3a9b3301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 
 --- !u!4 &1301569800
 Transform:
   m_ObjectHideFlags: 0
@@ -466,16 +467,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveX: 0
   moveY: 0
-  moveDirectionEvent:
+  MoveDirectionEvent:
     m_PersistentCalls:
       m_Calls: []
-  touchZoomScaleEvent:
+  TouchZoomScaleEvent:
     m_PersistentCalls:
       m_Calls: []
-  outLineStateEvent:
+  OutLineStateEvent:
     m_PersistentCalls:
       m_Calls: []
-  modelAlphaStateEvent:
+  ModelAlphaStateEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  ResetModelRotateEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  TurnOnModelRotateEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1571268632

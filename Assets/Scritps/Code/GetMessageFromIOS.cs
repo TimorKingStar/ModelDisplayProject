@@ -7,33 +7,33 @@ public class GetMessageFromIOS : MonoBehaviour
 {
     
      [DllImport("__Internal")]
-     private static extern void CallObjCFunc(string funcName);
+     private static extern void CallLoadModelProgress(string modelName,string funcName);
 
 
-    //游戏物体名称：GetMessageFromIOS  方法名称和参数如下：
+    public static void LoadModelProgress(string modelName,string progress)
+    {
+        Debug.Log(modelName + " _progress: " + progress);
+#if UNITY_IOS
+        CallLoadModelProgress(modelName, progress);
+#endif
+    }
+
+
+    //游戏物体名称：GetMessageFromOS  方法名称和参数如下：
     float offset;
     Vector2 dir = new Vector2();
     float dirX, dirY;
     public string state;
 
+
     //private void OnGUI()
     //{
-    //    if (GUILayout.Button("-----下载", GUILayout.Width(200), GUILayout.Height(50)))
+    //    if (GUILayout.Button(">>>>>揍你",GUILayout.Width(200f),GUILayout.Height(30f)))
     //    {
     //        string url = "https://s.banbanfriend.com/Geo.zip";
     //        SetModelurl(url);
     //    }
-    //    if (GUILayout.Button("-----归位",GUILayout.Width(200),GUILayout.Height(50)))
-    //    {
-    //        ResetModelRotate();
-    //    }
-    //    if (GUILayout.Button("-----锁定旋转", GUILayout.Width(200), GUILayout.Height(50)))
-    //    {
-    //        TurnOnModelRotateState(state);
-    //    }
     //}
-
-
 
     /// <summary>
     /// 下载的链接

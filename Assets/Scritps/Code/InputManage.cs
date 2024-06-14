@@ -38,6 +38,10 @@ public class InputManage : MonoBehaviour
     /// </summary>
     void TouchZoom()
     {
+#if UNITY_EDITOR
+        TouchZoomScaleEvent?.Invoke(Input.GetAxis("Mouse ScrollWheel")*5f); 
+#endif
+
         if (Input.touchCount == 2)
         {
             currentTouch_1 = Input.GetTouch(0);
