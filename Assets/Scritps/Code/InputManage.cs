@@ -11,10 +11,12 @@ public class InputManage : MonoBehaviour
     float moveY;
     Vector2 moveDirection = new Vector2();
 
-    public UnityEvent<Vector2> moveDirectionEvent;
-    public UnityEvent<float> touchZoomScaleEvent;
-    public UnityEvent<float> outLineStateEvent;
-    public UnityEvent<float> modelAlphaStateEvent;
+    public UnityEvent<Vector2> MoveDirectionEvent;
+    public UnityEvent<float> TouchZoomScaleEvent;
+    public UnityEvent<float> OutLineStateEvent;
+    public UnityEvent<float> ModelAlphaStateEvent;
+    public UnityEvent ResetModelRotateEvent;
+    public UnityEvent<bool> TurnOnModelRotateEvent;
 
     void Update()
     {
@@ -28,6 +30,8 @@ public class InputManage : MonoBehaviour
 
     Touch currentTouch_1;
     Touch currentTouch_2;
+
+
 
     /// <summary>
     /// 放大缩小，可以是模型的大小，也可以是相机的View
@@ -48,7 +52,7 @@ public class InputManage : MonoBehaviour
             scaleFactor = (Vector2.Distance(lastTouch_1.position, lastTouch_2.position)
                 - Vector2.Distance(currentTouch_1.position, currentTouch_2.position));
 
-            touchZoomScaleEvent?.Invoke(scaleFactor);
+            TouchZoomScaleEvent?.Invoke(scaleFactor);
             lastTouch_1 = currentTouch_1;
             lastTouch_2 = currentTouch_2;
         }
@@ -60,7 +64,7 @@ public class InputManage : MonoBehaviour
         moveY = Input.GetAxis("Vertical");
         moveDirection.x = moveX;
         moveDirection.y = moveY;
-        moveDirectionEvent?.Invoke(moveDirection);
+        MoveDirectionEvent?.Invoke(moveDirection);
     }
 
 
@@ -82,7 +86,7 @@ public class InputManage : MonoBehaviour
                 moveY = Input.GetAxis("Mouse Y") ;
                 moveDirection.x = moveX;
                 moveDirection.y = moveY;
-                moveDirectionEvent?.Invoke(moveDirection);
+                MoveDirectionEvent?.Invoke(moveDirection);
 
                 Debug.Log("Mousex : " + moveX);
                 Debug.Log("Mousey : " + moveY);

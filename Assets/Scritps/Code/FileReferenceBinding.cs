@@ -44,25 +44,49 @@ public class FileReferenceBinding : MonoBehaviour
     
     private void OnEnable()
     {
-        GameManager.Instance.inputManage.outLineStateEvent.AddListener(SetOutLineState);
-        GameManager.Instance.inputManage.modelAlphaStateEvent.AddListener(SetAlphaState);
-        GameManager.Instance.inputManage.moveDirectionEvent.AddListener(ModelRotate);
+        GameManager.Instance.inputManage.OutLineStateEvent.AddListener(SetOutLineState);
+        GameManager.Instance.inputManage.ModelAlphaStateEvent.AddListener(SetAlphaState);
+        GameManager.Instance.inputManage.MoveDirectionEvent.AddListener(ModelRotate);
+        GameManager.Instance.inputManage.TurnOnModelRotateEvent.AddListener(SetOpenRotate);
+        GameManager.Instance.inputManage.ResetModelRotateEvent.AddListener(ResetRotate);
     }
 
+     Quaternion initQua;
+    private void Start()
+    {
+        openModelRotate = true;
+        initQua = _rootModel.transform.rotation;
+        Debug.Log("angle: "+initQua.eulerAngles.ToString());
+    }
     Vector3 eulerRotate = new Vector3();
+
+    bool openModelRotate;
+    void SetOpenRotate(bool state)
+    {
+        openModelRotate = state;
+    }
     private void ModelRotate(Vector2 arg0)
     {
-        eulerRotate.x = arg0.y; 
-        eulerRotate.y = arg0.x;
-        _rootModel.transform.Rotate(eulerRotate, Space.World);
+        if (openModelRotate)
+        {
+            eulerRotate.x = arg0.y;
+            eulerRotate.y = -arg0.x;
+            _rootModel.transform.Rotate(eulerRotate, Space.World);
+        }
     }
+
+    void ResetRotate()
+    {
+        _rootModel.transform.localRotation = initQua;
+    }
+
 
     private void OnDisable()
     {
         try
         {
-            GameManager.Instance.inputManage.outLineStateEvent.RemoveListener(SetOutLineState);
-            GameManager.Instance.inputManage.modelAlphaStateEvent.RemoveListener(SetAlphaState);
+            GameManager.Instance.inputManage.OutLineStateEvent.RemoveListener(SetOutLineState);
+            GameManager.Instance.inputManage.ModelAlphaStateEvent.RemoveListener(SetAlphaState);
         }
         catch (Exception e)
         {
