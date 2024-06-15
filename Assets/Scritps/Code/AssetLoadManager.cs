@@ -47,13 +47,23 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     public Texture2D _roughNess;
     public Texture2D _normalColor;
 
+    public List<UnityEngine.GameObject> allGameObjects=new List<GameObject>();
+    void UnLoadGameobject()
+    {
+        if (allGameObjects.Count > 0)
+        {
+            foreach (var go in allGameObjects)
+            {
+                Destroy(go);
+            }
+
+            allGameObjects.Clear();
+        }
+    }
+
     public  void DownModeFromWeb(string webUrl)
     {
-        if (currentModel!=null)
-        {
-            Destroy(currentModel);
-        }
-        
+        UnLoadGameobject();
         Debug.Log(webUrl);
         currentModelPath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(webUrl)
                          +"/Fbx/"+ FileUtils.GetFilenameWithoutExtension(webUrl) +".fbx";
@@ -172,25 +182,27 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     public GameObject currentModel;
     private void OnLoad(AssetLoaderContext  loaderContext)
     {
-        foreach (var go in loaderContext.GameObjects)
-        {
-            
-        }
         loaderContext.RootGameObject.SetActive(false);
     }
     
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
+        
         currentModel = loaderContext.RootGameObject;
-       var AllAnimation= loaderContext.RootModel.AllAnimations;
-        var currentMode=  loaderContext.RootGameObject;
+        foreach (var g in loaderContext.GameObjects)
+        {
+            allGameObjects.Add(g.Value);
+        }
+
+        var AllAnimation= loaderContext.RootModel.AllAnimations;
+       var currentMode=  loaderContext.RootGameObject;
 
 
         var fileReference= currentMode.AddComponent<FileReferenceBinding>();
         fileReference.Init(loaderContext,_baseColor,_normalColor,_roughNess);
         //currentMode.transform.position = Vector3.zero;
         currentMode.SetActive(true);
-    }
+    } 
 
     private void OnProgress(AssetLoaderContext loaderContext, float progress)
     {

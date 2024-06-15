@@ -120,6 +120,7 @@ public class FileReferenceBinding : MonoBehaviour
     public List<GameObject> _depthModel =new List<GameObject>();
 
     public Vector3 euler;
+    public GameObject ground;
     public void Init(AssetLoaderContext loaderContext, Texture baseColor, Texture normalColor, Texture roughNess)
     {
         _rootModel = loaderContext.RootGameObject;
@@ -156,14 +157,20 @@ public class FileReferenceBinding : MonoBehaviour
                     mat.InitMaterial(baseColor, normalColor, roughNess);
                     materialCreators.Add(mat);
                 }
+                else
+                {
+                    ground= m.Value;
+                    ground.transform.SetParent(null);
+                }
             }
         }
 
         ICamera tempCamera=null;
         if (loaderContext.RootModel.AllCameras.Count>0)
         {
-            tempCamera = loaderContext.RootModel.AllCameras[0];
+           tempCamera = loaderContext.RootModel.AllCameras[0];
         }
+
         GameManager.Instance.cameraController.SetCameraInfo(_rootModel, _cameraTrans, tempCamera);
 
         if (tempCamera!=null)

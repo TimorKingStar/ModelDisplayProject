@@ -25,14 +25,14 @@ public class GetMessageFromIOS : MonoBehaviour
     public string state;
 
 
-    //private void OnGUI()
-    //{
-    //    if (GUILayout.Button(">>>>>走你", GUILayout.Width(200f), GUILayout.Height(30f)))
-    //    {
-    //        string url = Application.streamingAssetsPath+ "/GeoWithCamera.zip";
-    //        SetModelurl(url);
-    //    }
-    //}
+    private void OnGUI()
+    {
+        if (GUILayout.Button(">>>>>走你", GUILayout.Width(200f), GUILayout.Height(30f)))
+        {
+            string url = Application.streamingAssetsPath + "/GeoWithCamera.zip";
+            SetModelurl(url);
+        }
+    }
 
     /// <summary>
     /// 下载的链接
