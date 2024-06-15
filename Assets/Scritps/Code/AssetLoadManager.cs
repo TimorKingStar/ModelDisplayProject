@@ -53,8 +53,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         {
             Destroy(currentModel);
         }
-
-       
+        
         Debug.Log(webUrl);
         currentModelPath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(webUrl)
                          +"/Fbx/"+ FileUtils.GetFilenameWithoutExtension(webUrl) +".fbx";
@@ -80,10 +79,8 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     void RenderModel()
     {
-
         if (File.Exists(currentModelPath) )
         {
-
             if (File.Exists(currentTexturePath + baseColor))
             {
                 var b= File.ReadAllBytes(currentTexturePath + baseColor);
@@ -119,9 +116,9 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             }
 
             var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true, false);
-
+            assetLoaderOptions.ImportCameras = true;
             AssetLoader.LoadModelFromFile(currentModelPath, OnLoad, OnMaterialLoad, OnProgress,
-                OnError, gameObject, assetLoaderOptions);
+            OnError, gameObject, assetLoaderOptions);
 
             Debug.Log(">>>>>>>>>:Load Model Finished");
         }
@@ -185,7 +182,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
         currentModel = loaderContext.RootGameObject;
-           var AllAnimation= loaderContext.RootModel.AllAnimations;
+       var AllAnimation= loaderContext.RootModel.AllAnimations;
         var currentMode=  loaderContext.RootGameObject;
 
 

@@ -16,7 +16,8 @@ using UnityEngine;
 
 public class FileReferenceBinding : MonoBehaviour
 {
-    const string _cameraName = "CameraExport";
+
+    const string _cameraName = "CameraPosition";
     const string _depthModeName = "Depth";
 
     [SerializeField]
@@ -58,6 +59,7 @@ public class FileReferenceBinding : MonoBehaviour
         initQua = _rootModel.transform.rotation;
         Debug.Log("angle: "+initQua.eulerAngles.ToString());
     }
+
     Vector3 eulerRotate = new Vector3();
 
     bool openModelRotate;
@@ -122,6 +124,8 @@ public class FileReferenceBinding : MonoBehaviour
     {
         _rootModel = loaderContext.RootGameObject;
        _allAnimClip = loaderContext.RootModel.AllAnimations;
+        
+
         _findAnim = _rootModel.TryGetComponent(out _anim);
  
         foreach (var lt in loaderContext.LoadedTextures)
@@ -129,14 +133,12 @@ public class FileReferenceBinding : MonoBehaviour
             Debug.Log("texture: "+lt.Key.Name);
         }
 
+        Debug.Log( "相机数量： "+loaderContext.RootModel.AllCameras.Count);
         foreach (var m in loaderContext.GameObjects)
         {
             if (m.Key.Name== _cameraName)
             {
-               // _cameraTrans = m.Value.transform;
-                //_cameraTrans.transform.Rotate(Vector3.up, 180f,Space.Self);
-                euler = m.Key.LocalRotation.eulerAngles;
-                Debug.Log("euler: " + euler.ToString());
+                _cameraTrans = m.Value.transform;
             }
 
 
@@ -148,16 +150,36 @@ public class FileReferenceBinding : MonoBehaviour
 
             if (m.Value.GetComponent<Renderer>()!=null)
             {
-                var mat= m.Value.AddComponent<MaterialCreator>();
-
-                //暂且写null
-                mat.InitMaterial(baseColor, normalColor, roughNess); 
-                materialCreators.Add(mat);
+                if (m.Value.name != "Ground1"&& m.Value.name != "Ground")
+                {
+                    var mat = m.Value.AddComponent<MaterialCreator>();
+                    mat.InitMaterial(baseColor, normalColor, roughNess);
+                    materialCreators.Add(mat);
+                }
             }
         }
 
-        GameManager.Instance.cameraController.SetCameraInfo(_rootModel, _cameraTrans);
-        
+        ICamera tempCamera=null;
+        if (loaderContext.RootModel.AllCameras.Count>0)
+        {
+            tempCamera = loaderContext.RootModel.AllCameras[0];
+        }
+        GameManager.Instance.cameraController.SetCameraInfo(_rootModel, _cameraTrans, tempCamera);
+
+        if (tempCamera!=null)
+        {
+            var camera= GetComponentInChildren<Camera>();
+            if (camera!=null)
+            {
+                Destroy(camera);
+
+            }
+            var lod = GetComponentInChildren<LODGroup>();
+            if (lod != null)
+            {
+                Destroy(lod);
+            }
+        }
     }
 
 }

@@ -32,7 +32,6 @@ public class InputManage : MonoBehaviour
     Touch currentTouch_2;
 
 
-
     /// <summary>
     /// 放大缩小，可以是模型的大小，也可以是相机的View
     /// </summary>

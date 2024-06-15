@@ -9,7 +9,6 @@ public class GetMessageFromIOS : MonoBehaviour
      [DllImport("__Internal")]
      private static extern void CallLoadModelProgress(string modelName,string funcName);
 
-
     public static void LoadModelProgress(string modelName,string progress)
     {
         Debug.Log(modelName + " _progress: " + progress);
@@ -28,9 +27,9 @@ public class GetMessageFromIOS : MonoBehaviour
 
     //private void OnGUI()
     //{
-    //    if (GUILayout.Button(">>>>>×áÄã",GUILayout.Width(200f),GUILayout.Height(30f)))
+    //    if (GUILayout.Button(">>>>>×ßÄã", GUILayout.Width(200f), GUILayout.Height(30f)))
     //    {
-    //        string url = "https://s.banbanfriend.com/Geo.zip";
+    //        string url = Application.streamingAssetsPath+ "/GeoWithCamera.zip";
     //        SetModelurl(url);
     //    }
     //}
