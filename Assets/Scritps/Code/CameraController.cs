@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
     Camera mainCamera;
     private void Awake()
     {
@@ -13,12 +12,18 @@ public class CameraController : MonoBehaviour
         _defaltPosition = mainCamera.transform.position;
         _defaltQuaternion = mainCamera.transform.rotation;
     }
+    
 
     [SerializeField]
     GameObject currentObj;
     [SerializeField]
-    Vector3 initPos;
-    Quaternion initQua;
+    Vector3 beforeInitPos;
+    Quaternion beforeInitQua;
+
+    [SerializeField]
+    Vector3 afterInitPos;
+    Quaternion afterInitQua;
+    
 
     [SerializeField]
     Vector3 _defaltPosition;
@@ -39,16 +44,16 @@ public class CameraController : MonoBehaviour
         }
 
         if (trans != null)
-        {
-            initPos = trans.localPosition;
-
-            initQua = QuaterConverter(trans.localRotation);
+        {   
+            beforeInitPos = trans.position;
+            beforeInitQua = QuaterConverter(trans.rotation);
         }
         else
         {
-            initPos = _defaltPosition;
-            initQua = _defaltQuaternion;
+            beforeInitPos = _defaltPosition;
+            beforeInitQua = _defaltQuaternion;
         }
+
         currentObj = obj;
         InitCameraInfo();
     }
@@ -78,13 +83,24 @@ public class CameraController : MonoBehaviour
 
     }
 
+
     /// <summary>
     /// 初始化相机位置
     /// </summary>
     public void InitCameraInfo()
-    {
-        mainCamera.transform.position = initPos;
-        mainCamera.transform.rotation = initQua;
+    {   
+        mainCamera.transform.position = beforeInitPos;
+        mainCamera.transform.rotation = beforeInitQua;
+
+        intervalDistance = Vector3.Distance(beforeInitPos, currentObj.transform.position);
+        targetRotationX = beforeInitQua.eulerAngles.y;
+        targetRotationY = beforeInitQua.eulerAngles.x;
+
+        targetRotationY = Mathf.Clamp(targetRotationY, minVerticalAngle, maxVerticalAngle);
+        mainCamera.transform.rotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
+        mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+        afterInitPos = mainCamera.transform.position;
+        afterInitQua = mainCamera.transform.rotation;
     }
 
     float minView = 10f;
@@ -106,7 +122,7 @@ public class CameraController : MonoBehaviour
         mainCamera.fieldOfView = Mathf.Clamp(viewValue, minView, maxView);
     }
     
-     float rotationSpeed = 10f;
+     float rotationSpeed = 200f;
      float maxVerticalAngle = 60f;
      float minVerticalAngle = -60f;
      float lerpSpeed = 200f;
@@ -118,29 +134,49 @@ public class CameraController : MonoBehaviour
     [SerializeField] 
     float intervalDistance;
 
+    [SerializeField]
+     bool openRotateState;
+
+
+    public void ResetCameraTransform()
+    {
+       mainCamera.transform.position = afterInitPos ;
+        mainCamera.transform.rotation = afterInitQua ;
+    }
+
+    public void SetRotateState(bool state)
+    {
+        openRotateState = state;
+    }
 
     /// <summary>
     /// 相机围绕目标旋转
     /// </summary>
     /// <param name="dir"></param>
-    public void RotateModel(Vector2 dir)
+    public void RotateAroundCamera(Vector2 dir)
     {
-        //if (currentObj == null)
-        //{
-        //    return;
-        //}
-        //if (currentObj)
-        //{
-        //    targetRotationX += dir.x * rotationSpeed * Time.deltaTime;
-        //    targetRotationY += dir.y * rotationSpeed * Time.deltaTime;
+        if (!openRotateState)
+        {
+            return;
+        }
 
-        //    targetRotationY = Mathf.Clamp(targetRotationY, minVerticalAngle, maxVerticalAngle);
+        if (currentObj == null)
+        {
+            return;
+        }
 
-        //    Quaternion targetRotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
-        //    mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
+        if (currentObj)
+        {
+            targetRotationX += dir.x * rotationSpeed * Time.deltaTime;
+            targetRotationY += dir.y * rotationSpeed * Time.deltaTime;
 
-        //    mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
-        //}
+            targetRotationY = Mathf.Clamp(targetRotationY, minVerticalAngle, maxVerticalAngle);
+
+            Quaternion targetRotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
+            mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
+
+            mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+        }
     }
 
 }

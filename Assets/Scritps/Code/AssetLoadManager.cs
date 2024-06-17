@@ -7,6 +7,8 @@ using TriLibCore.Utils;
 using System.IO;
 using Unity.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Zip;
+using TriLibCore.Samples;
+using TriLibCore.Mappers;
 
 /*
  1. 将模型以及贴图都放到压缩包里面，先将服务端的文件下载到本地。
@@ -31,23 +33,19 @@ using ICSharpCode.SharpZipLib.Zip;
   模型需要贴图，里面带一张 mainTexture
   模型皮肤，肌肉，骨骼层级进行观察，每层命名为 Depth，或者 Depth_model，看以上两种哪个方便
   模型可以带动画
-     */
+ */
+
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
 
     string currentModelPath;
+    string currentFilePath;
+    string currentTextureDirectory;
     string currentTexturePath;
-    
-    const string baseColor = "_BaseColor.png";
-    const string roughNess = "_Roughness.png";
-    const string normalColor = "_NormalTexture.png";
-
-    public Texture2D _baseColor;
-    public Texture2D _roughNess;
-    public Texture2D _normalColor;
 
     public List<UnityEngine.GameObject> allGameObjects=new List<GameObject>();
+
     void UnLoadGameobject()
     {
         if (allGameObjects.Count > 0)
@@ -61,25 +59,39 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
-    public  void DownModeFromWeb(string webUrl)
+    public void CancleDownload()
+    {
+        Debug.Log(">>>>>>>> Cancle loaded model");
+        HttpManager.Instance.CancleDownload();
+        haltTask = true;
+    }
+
+    public void DownModeFromWeb(string webUrl)
     {
         UnLoadGameobject();
-        Debug.Log(webUrl);
-        currentModelPath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(webUrl)
-                         +"/Fbx/"+ FileUtils.GetFilenameWithoutExtension(webUrl) +".fbx";
+        haltTask = false;
 
-        Debug.Log(currentModelPath);
-        currentTexturePath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(webUrl) +
-                           "/Texture/";
-         
-        if (!File.Exists(currentModelPath))
+        currentFilePath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(webUrl);
+
+        currentModelPath = currentFilePath + "/Fbx/" + FileUtils.GetFilenameWithoutExtension(webUrl)+".fbx";
+
+        currentTextureDirectory = currentFilePath + "/Texture";
+
+        Debug.Log(currentFilePath); 
+        
+        if (!File.Exists(currentFilePath))
         {
             HttpManager.Instance.DownLoadAssets(webUrl).OnComplate(c =>
             {
                 Debug.Log(">>>>>>>>>> Download file surrce");
-                WriteFile(c, webUrl);
+                WriteFile(c, webUrl,true);
 
-            }).OnError(e => { Debug.LogError(e); });
+            }).OnError(e => { Debug.LogError(e); }).
+            OnProgress(p=> 
+            {
+                GetMessageFromIOS.DownloadModelProgress(FileUtils.GetFilenameWithoutExtension(webUrl), p.ToString());
+
+            });
         }
         else
         {
@@ -87,50 +99,32 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
+    public bool haltTask;
+    
+    AssetLoaderOptions assetLoaderOptions;
+    void LoadModelMode()
+    {   
+        if (assetLoaderOptions == null)
+        {
+            assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
+            assetLoaderOptions.ImportCameras = true;
+            assetLoaderOptions.ImportMaterials = false;
+            assetLoaderOptions.MaterialMappers = new MaterialMapper[] { ScriptableObject.CreateInstance<StandardMaterialMapper>()};
+        }
+
+        AssetLoader.LoadModelFromStream(File.OpenRead(currentModelPath), FileUtils.GetShortFilename(currentModelPath), FileUtils.GetFileExtension(currentModelPath), OnLoad, OnMaterialLoad, OnProgress,
+        OnError, gameObject, assetLoaderOptions, null, haltTask);
+
+        Debug.Log(">>>>>>>>>:Load Model Finished");
+    }
+
+    
     void RenderModel()
     {
         if (File.Exists(currentModelPath) )
         {
-            if (File.Exists(currentTexturePath + baseColor))
-            {
-                var b= File.ReadAllBytes(currentTexturePath + baseColor);
-                _baseColor = new Texture2D(1024,1024);
-                _baseColor.LoadImage(b);
-            }
-            else
-            {
-                Debug.Log("没有找到baseColor");
-                _baseColor = null;
-            }
-
-            if (File.Exists(currentTexturePath + normalColor))
-            {
-                var b = File.ReadAllBytes(currentTexturePath + normalColor);
-                _normalColor = new Texture2D(1024, 1024);
-                _normalColor.LoadImage(b);
-            }
-            else
-            {
-                _normalColor = null;
-            }
-
-            if (File.Exists(currentTexturePath + roughNess))
-            {
-                var b = File.ReadAllBytes(currentTexturePath + roughNess);
-                _roughNess = new Texture2D(1024, 1024);
-                _roughNess.LoadImage(b);
-            }
-            else
-            {
-                _roughNess = null;
-            }
-
-            var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true, false);
-            assetLoaderOptions.ImportCameras = true;
-            AssetLoader.LoadModelFromFile(currentModelPath, OnLoad, OnMaterialLoad, OnProgress,
-            OnError, gameObject, assetLoaderOptions);
-
-            Debug.Log(">>>>>>>>>:Load Model Finished");
+            LoadTexture();
+            LoadModelMode(); 
         }
         else
         {
@@ -138,7 +132,53 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
-    void WriteFile(byte[]data,string url)
+    Dictionary<string, Dictionary<string, Texture2D>> allModelTexture = new Dictionary<string, Dictionary<string, Texture2D>>();
+
+    public List<Texture2D> totalTexture = new List<Texture2D>();
+
+    void LoadTexture()
+    {
+        allModelTexture.Clear();
+        if (!Directory.Exists(currentTextureDirectory))
+            return;
+
+        var files = Directory.GetFiles(currentTextureDirectory);
+        foreach (var tex in files)
+        {
+            var texPath = tex.Replace(@"\", "/");
+            var texName = FileUtils.GetFilenameWithoutExtension(texPath);
+            string[] TexNames = texName.Split('_');
+            byte[] data = File.ReadAllBytes(texPath);
+            Texture2D texture = new Texture2D(1024, 1024);
+            texture.name = FileUtils.GetFilenameWithoutExtension(texPath);
+            if (texture.LoadImage(data))
+            {
+                if (TexNames.Length == 2)
+                {
+                    var modelName = TexNames[0]; 
+                    var property = TexNames[1];
+                    if (!allModelTexture.ContainsKey(modelName))
+                    { 
+                        var d = new Dictionary<string, Texture2D>();
+                        allModelTexture.Add(modelName, d);
+                    }
+                    allModelTexture[modelName].Add(property, texture);
+                    totalTexture.Add(texture);
+                }
+                else
+                {
+                    Debug.LogError(texture.name);
+                }
+            }
+            else
+            {
+                Debug.LogError(texture.name);
+            }
+            
+        }
+    }
+
+    void WriteFile(byte[]data,string url,bool unZip)
     {
         if (data != null) 
         {  
@@ -152,24 +192,28 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             File.WriteAllBytes(filePath, data);         
             Debug.Log(">>>>>>>>>>>>>>>Write finished :"+ filePath);
 
+            if (unZip)
+            {
+                #region 解压缩
+                FastZip zip = new FastZip();
+                Debug.Log(pathDirectory);
+                if (FileUtils.GetFileExtension(filePath) == ".zip")
+                {
+                    zip.ExtractZip(filePath, pathDirectory, "");
 
-            #region 解压缩
-            FastZip zip = new FastZip();
-            Debug.Log(pathDirectory);
-            if (FileUtils.GetFileExtension(filePath) == ".zip")
-            {
-                zip.ExtractZip(filePath, pathDirectory, "");
-            }
-            else
-            {
-                Debug.LogError(">>>>>>>>>>> FileExtension dont is zip");
-            }
+                }
+                else
+                {
+                    Debug.LogError(">>>>>>>>>>> FileExtension dont is zip");
+                }
 
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                #endregion
             }
-            #endregion
 
             RenderModel();
         }
@@ -187,25 +231,21 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
-        
         currentModel = loaderContext.RootGameObject;
         foreach (var g in loaderContext.GameObjects)
         {
             allGameObjects.Add(g.Value);
         }
 
-        var AllAnimation= loaderContext.RootModel.AllAnimations;
-       var currentMode=  loaderContext.RootGameObject;
+        var fileReference= currentModel.AddComponent<FileReferenceBinding>();
+        fileReference.Init(loaderContext,allModelTexture);
 
-
-        var fileReference= currentMode.AddComponent<FileReferenceBinding>();
-        fileReference.Init(loaderContext,_baseColor,_normalColor,_roughNess);
-        //currentMode.transform.position = Vector3.zero;
-        currentMode.SetActive(true);
+        currentModel.SetActive(true);
     } 
 
     private void OnProgress(AssetLoaderContext loaderContext, float progress)
     {
+        Debug.Log(progress);
         GetMessageFromIOS.LoadModelProgress(FileUtils.GetFilenameWithoutExtension(loaderContext.Filename), progress.ToString()); 
     }
     
@@ -213,6 +253,13 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     {
         Debug.Log(obj);
     }
-
     
+}
+
+/// <summary>
+/// 贴图对应的属性名
+/// </summary>
+public class TexturePropertyName
+{
+   
 }

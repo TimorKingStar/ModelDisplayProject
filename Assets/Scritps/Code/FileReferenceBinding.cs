@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using TriLibCore;
+using TriLibCore.General;
 using TriLibCore.Interfaces;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 /*
@@ -17,8 +20,17 @@ using UnityEngine;
 public class FileReferenceBinding : MonoBehaviour
 {
 
+    const string _groundName = "Ground";
     const string _cameraName = "CameraPosition";
-    const string _depthModeName = "Depth";
+
+    FileLayerBinding  fileLayerBinding;
+
+    public void SetFileReferenceBinding(FileLayerBinding binding)
+    {
+        fileLayerBinding = binding;
+        GameManager.Instance.inputManage.SetHeadLayerShowEvent.AddListener(fileLayerBinding.SetHeadActive );
+        GameManager.Instance.inputManage.ResetHeadLayerShowEvent.AddListener(fileLayerBinding.ResetHeadActive);
+    }
 
     [SerializeField]
     public Transform _cameraTrans;
@@ -26,69 +38,18 @@ public class FileReferenceBinding : MonoBehaviour
     [SerializeField]
     public GameObject _rootModel;
 
-    //所有的动画数据
-    public List<IAnimation> _allAnimClip;
-
-    public bool _findAnim;
-    public Animation _anim;
-
-    public AnimationClip currentAnimClip;
-    public float currentFrame;
-
-
-    /*
-     1. 展示不同层级在这里展示
-     2. 播放动画也在这里播放
-     3. UI层需要知道有多少个动画
-         
-     */
-    
     private void OnEnable()
     {
         GameManager.Instance.inputManage.OutLineStateEvent.AddListener(SetOutLineState);
-        GameManager.Instance.inputManage.ModelAlphaStateEvent.AddListener(SetAlphaState);
-        GameManager.Instance.inputManage.MoveDirectionEvent.AddListener(ModelRotate);
-        GameManager.Instance.inputManage.TurnOnModelRotateEvent.AddListener(SetOpenRotate);
-        GameManager.Instance.inputManage.ResetModelRotateEvent.AddListener(ResetRotate);
+        GameManager.Instance.inputManage.AlphaStateEvent.AddListener(SetAlphaState);
     }
-
-     Quaternion initQua;
-    private void Start()
-    {
-        openModelRotate = true;
-        initQua = _rootModel.transform.rotation;
-        Debug.Log("angle: "+initQua.eulerAngles.ToString());
-    }
-
-    Vector3 eulerRotate = new Vector3();
-
-    bool openModelRotate;
-    void SetOpenRotate(bool state)
-    {
-        openModelRotate = state;
-    }
-    private void ModelRotate(Vector2 arg0)
-    {
-        if (openModelRotate)
-        {
-            eulerRotate.x = arg0.y;
-            eulerRotate.y = -arg0.x;
-            _rootModel.transform.Rotate(eulerRotate, Space.World);
-        }
-    }
-
-    void ResetRotate()
-    {
-        _rootModel.transform.localRotation = initQua;
-    }
-
 
     private void OnDisable()
     {
         try
         {
             GameManager.Instance.inputManage.OutLineStateEvent.RemoveListener(SetOutLineState);
-            GameManager.Instance.inputManage.ModelAlphaStateEvent.RemoveListener(SetAlphaState);
+            GameManager.Instance.inputManage.AlphaStateEvent.RemoveListener(SetAlphaState);
         }
         catch (Exception e)
         {
@@ -98,7 +59,7 @@ public class FileReferenceBinding : MonoBehaviour
 
     private void SetAlphaState(float arg0)
     {
-        foreach (var mat in materialCreators)
+        foreach (var mat in listMaterials)
         {
             mat.SetAlpha(arg0);
         }
@@ -106,35 +67,27 @@ public class FileReferenceBinding : MonoBehaviour
 
     private void SetOutLineState(float arg0)
     {
-        foreach (var mat in materialCreators)
+        bool state = arg0 == 1;
+        foreach (var mat in listMaterials)
         {
-            bool state= arg0 == 1 ? true : false;
-            mat.SetOutLineState(state);
+            mat.SetOutlineState(state);
         }
     }
 
-    public List<MaterialCreator> materialCreators= new List<MaterialCreator>();
-    /// <summary>
-    /// 不同层级的模型
-    /// </summary>
-    public List<GameObject> _depthModel =new List<GameObject>();
+    public List<MaterialSetting> listMaterials = new List<MaterialSetting>();
 
-    public Vector3 euler;
-    public GameObject ground;
-    public void Init(AssetLoaderContext loaderContext, Texture baseColor, Texture normalColor, Texture roughNess)
+
+    public void Init(AssetLoaderContext loaderContext, Dictionary<string, Dictionary<string, Texture2D>> allModelTexture)
     {
         _rootModel = loaderContext.RootGameObject;
-       _allAnimClip = loaderContext.RootModel.AllAnimations;
-        
 
-        _findAnim = _rootModel.TryGetComponent(out _anim);
- 
-        foreach (var lt in loaderContext.LoadedTextures)
-        {
-            Debug.Log("texture: "+lt.Key.Name);
-        }
+        var layerBind = _rootModel.AddComponent<FileLayerBinding>();
+        layerBind.InitLayer(loaderContext);
+        SetFileReferenceBinding(layerBind); 
 
-        Debug.Log( "相机数量： "+loaderContext.RootModel.AllCameras.Count);
+        var mat = _rootModel.AddComponent<MaterialCreator>();
+        listMaterials = mat.InitMaterial(allModelTexture);
+
         foreach (var m in loaderContext.GameObjects)
         {
             if (m.Key.Name== _cameraName)
@@ -142,25 +95,16 @@ public class FileReferenceBinding : MonoBehaviour
                 _cameraTrans = m.Value.transform;
             }
 
-
-            if (m.Key.Name == _depthModeName)
+            var render = m.Value.GetComponent<Renderer>();
+            if (render != null) 
             {
-                //不同层级展示的模型
-                _depthModel.Add(m.Value);
-            }
+                var name = m.Value.name.Split('_')[0];
 
-            if (m.Value.GetComponent<Renderer>()!=null)
-            {
-                if (m.Value.name != "Ground1"&& m.Value.name != "Ground")
+                var tempMat = listMaterials.Find(mt => { return mt.name == name; });
+                if (tempMat != null)
                 {
-                    var mat = m.Value.AddComponent<MaterialCreator>();
-                    mat.InitMaterial(baseColor, normalColor, roughNess);
-                    materialCreators.Add(mat);
-                }
-                else
-                {
-                    ground= m.Value;
-                    ground.transform.SetParent(null);
+                    render.material = tempMat.GetMaterial();
+                    
                 }
             }
         }
@@ -173,20 +117,20 @@ public class FileReferenceBinding : MonoBehaviour
 
         GameManager.Instance.cameraController.SetCameraInfo(_rootModel, _cameraTrans, tempCamera);
 
-        if (tempCamera!=null)
-        {
-            var camera= GetComponentInChildren<Camera>();
-            if (camera!=null)
-            {
-                Destroy(camera);
 
-            }
-            var lod = GetComponentInChildren<LODGroup>();
-            if (lod != null)
-            {
-                Destroy(lod);
-            }
+        var camera = GetComponentInChildren<Camera>();
+        if (camera != null)
+        {
+            Destroy(camera);
+
+        }
+        var lod = GetComponentInChildren<LODGroup>();
+        if (lod != null)
+        {
+            Destroy(lod);
         }
     }
 
 }
+
+ 

@@ -12,7 +12,7 @@ namespace TriLibCore.Mappers
     {
         /// <inheritdoc />
         public override void Map(TextureLoadingContext textureLoadingContext)
-        {
+        {   
             var zipLoadCustomContextData = CustomDataHelper.GetCustomData<ZipLoadCustomContextData>(textureLoadingContext.Context.CustomData);
             if (zipLoadCustomContextData == null)
             {

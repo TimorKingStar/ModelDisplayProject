@@ -9,14 +9,48 @@ public class InputManage : MonoBehaviour
     float moveX;
     [SerializeField]
     float moveY;
+    [SerializeField]
+    float currentMoveValue; 
+    
     Vector2 moveDirection = new Vector2();
 
-    public UnityEvent<Vector2> MoveDirectionEvent;
+    /// <summary>
+    /// 分层显示事件
+    /// </summary>
+    public UnityEvent<string, bool> SetHeadLayerShowEvent;
+    /// <summary>
+    /// 相机围绕旋转事件
+    /// </summary>
+    public UnityEvent<Vector2> RotateCameraEvent;
+    /// <summary>
+    /// 放大缩小视角事件
+    /// </summary>
     public UnityEvent<float> TouchZoomScaleEvent;
+    /// <summary>
+    /// 显示边缘线事件
+    /// </summary>
     public UnityEvent<float> OutLineStateEvent;
-    public UnityEvent<float> ModelAlphaStateEvent;
-    public UnityEvent ResetModelRotateEvent;
-    public UnityEvent<bool> TurnOnModelRotateEvent;
+    /// <summary>
+    /// 设置透明度事件
+    /// </summary>
+    public UnityEvent<float> AlphaStateEvent;
+    /// <summary>
+    /// 重置相机位置事件
+    /// </summary>
+    public UnityEvent ResetCameraRotateEvent;
+    /// <summary>
+    /// 开启相机旋转事件
+    /// </summary>
+    public UnityEvent<bool> TurnOnCameraRotateEvent;
+    /// <summary>
+    /// 取消加载模型事件
+    /// </summary>
+    public UnityEvent CancleLoadedModelEvent;
+    /// <summary>
+    /// 重置头部结构
+    /// </summary>
+    public UnityEvent ResetHeadLayerShowEvent;
+
 
     void Update()
     {
@@ -30,6 +64,8 @@ public class InputManage : MonoBehaviour
 
     Touch currentTouch_1;
     Touch currentTouch_2;
+
+
 
 
     /// <summary>
@@ -65,11 +101,11 @@ public class InputManage : MonoBehaviour
     {
         moveX = Input.GetAxis("Horizontal");
         moveY = Input.GetAxis("Vertical");
-        moveDirection.x = moveX;
+        moveDirection.x = -moveX;
         moveDirection.y = moveY;
-        MoveDirectionEvent?.Invoke(moveDirection);
-    }
-
+        RotateCameraEvent?.Invoke(moveDirection);
+    } 
+     
 
     /// <summary>
     /// 滑动屏幕的时候，旋转模型或者灯光
@@ -87,9 +123,10 @@ public class InputManage : MonoBehaviour
             {   
                 moveX = Input.GetAxis("Mouse X") ;
                 moveY = Input.GetAxis("Mouse Y") ;
-                moveDirection.x = moveX;
+
+                moveDirection.x = -moveX;
                 moveDirection.y = moveY;
-                MoveDirectionEvent?.Invoke(moveDirection);
+                RotateCameraEvent?.Invoke(moveDirection);
 
                 Debug.Log("Mousex : " + moveX);
                 Debug.Log("Mousey : " + moveY);

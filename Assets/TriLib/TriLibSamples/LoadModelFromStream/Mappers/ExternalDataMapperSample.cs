@@ -21,6 +21,7 @@ namespace TriLibCore.Samples
         public override Stream Map(AssetLoaderContext assetLoaderContext, string originalFilename, out string finalPath)
         {
             finalPath = $"{assetLoaderContext.BasePath}/{FileUtils.GetFilename(originalFilename)}";
+
             if (File.Exists(finalPath))
             {
                 Debug.Log($"Found external file at: {finalPath}");

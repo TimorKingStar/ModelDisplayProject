@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 5461ec99c116c64458ece866528a775c, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 6748aab56c08afe4b81cca21c58bd122, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -166,7 +166,7 @@ Camera:
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 20
+  m_FocalLength: 20.784569
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -175,9 +175,9 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 100
-  field of view: 61.927517
+  field of view: 60.0001
   orthographic: 0
-  orthographic size: 0.27465057
+  orthographic size: 1.1611258
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -201,7 +201,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537010428}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -220,11 +220,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentObj: {fileID: 0}
-  initPos: {x: 0, y: 0, z: 0}
+  beforeInitPos: {x: 0, y: 0, z: 0}
+  afterInitPos: {x: 0, y: 0, z: 0}
   _defaltPosition: {x: 0, y: 0, z: 0}
   targetRotationX: 0
   targetRotationY: 0
   intervalDistance: 0
+  openRotateState: 0
 --- !u!1 &1011954831
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,7 +260,7 @@ MonoBehaviour:
   inputManage: {fileID: 1571268631}
   cameraController: {fileID: 537010432}
   lightController: {fileID: 1373088024}
-  currentMaterial: {fileID: 2100000, guid: 79a925fafb5014341bd9da627b0d0c35, type: 2}
+  alphaMaterial: {fileID: 2100000, guid: 2d08bcf6ae7aace499a05d553d84ea5c, type: 2}
 --- !u!114 &1011954833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,7 +316,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 775f054421001c04483fb4cf3a9b3301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 
 --- !u!4 &1301569800
 Transform:
   m_ObjectHideFlags: 0
@@ -467,7 +468,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveX: 0
   moveY: 0
-  MoveDirectionEvent:
+  currentMoveValue: 0
+  SetHeadLayerShowEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  RotateCameraEvent:
     m_PersistentCalls:
       m_Calls: []
   TouchZoomScaleEvent:
@@ -476,13 +481,19 @@ MonoBehaviour:
   OutLineStateEvent:
     m_PersistentCalls:
       m_Calls: []
-  ModelAlphaStateEvent:
+  AlphaStateEvent:
     m_PersistentCalls:
       m_Calls: []
-  ResetModelRotateEvent:
+  ResetCameraRotateEvent:
     m_PersistentCalls:
       m_Calls: []
-  TurnOnModelRotateEvent:
+  TurnOnCameraRotateEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  CancleLoadedModelEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  ResetHeadLayerShowEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1571268632
@@ -528,9 +539,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8e1db981a3c15249a63cf9803f657d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseColor: {fileID: 0}
-  _roughNess: {fileID: 0}
-  _normalColor: {fileID: 0}
+  allGameObjects: []
+  haltTask: 0
+  totalTexture: []
   currentModel: {fileID: 0}
 --- !u!4 &1645517618
 Transform:

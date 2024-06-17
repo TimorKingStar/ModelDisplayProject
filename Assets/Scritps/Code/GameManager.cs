@@ -12,22 +12,19 @@ public class GameManager : MonoSingleton<GameManager>
     public CameraController cameraController;
     public LightController lightController;
 
-    public Material currentMaterial;
-    public Material GetMaterial()
-    {
-        return currentMaterial;
-    }
+    public Material alphaMaterial;
+
     private void OnEnable()
     {
         inputManage.TouchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
-        //inputManage.moveDirectionEvent.AddListener(cameraController.RotateModel);
-       // inputManage.moveDirectionEvent.AddListener(lightController.Rotate);
+        inputManage.RotateCameraEvent.AddListener(cameraController.RotateAroundCamera);
+        inputManage.TurnOnCameraRotateEvent.AddListener(cameraController.SetRotateState);
     }
 
     private void OnDisable()
     {
         inputManage.TouchZoomScaleEvent.RemoveListener(cameraController.ZoomInOut);
-        //inputManage.moveDirectionEvent.RemoveListener(cameraController.RotateModel);
-        //inputManage.moveDirectionEvent.RemoveListener(lightController.Rotate);
+        inputManage.RotateCameraEvent.RemoveListener(cameraController.RotateAroundCamera);
+        inputManage.TurnOnCameraRotateEvent.RemoveListener(cameraController.SetRotateState);
     }
 }

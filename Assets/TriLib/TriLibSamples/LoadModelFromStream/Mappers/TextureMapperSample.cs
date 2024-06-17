@@ -20,7 +20,6 @@ namespace TriLibCore.Samples
             var finalPath = $"{textureLoadingContext.Context.BasePath}/{FileUtils.GetFilename(textureLoadingContext.Texture.Filename)}";
             if (File.Exists(finalPath))
             {
-
                 textureLoadingContext.Stream = File.OpenRead(finalPath);
                 Debug.Log($"Found texture at: {finalPath}");
                 return;

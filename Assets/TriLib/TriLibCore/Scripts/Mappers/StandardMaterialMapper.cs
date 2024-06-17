@@ -51,6 +51,7 @@ namespace TriLibCore.Mappers
 
         public override void Map(MaterialMapperContext materialMapperContext)
         {
+
             materialMapperContext.VirtualMaterial = new VirtualMaterial();
 
             CheckTransparencyMapTexture(materialMapperContext);
@@ -137,6 +138,14 @@ namespace TriLibCore.Mappers
 
         private void CheckNormalMapTexture(MaterialMapperContext materialMapperContext)
         {
+            if (materialMapperContext.Material.GetTextureValue("_MainTex")!=null)
+            {
+                Debug.LogError("不空");
+            }
+            else
+            {
+                Debug.LogError("空");
+            }
             var normalMapTexturePropertyName = materialMapperContext.Material.GetGenericPropertyName(GenericMaterialProperty.NormalMap);
             var textureValue = materialMapperContext.Material.GetTextureValue(normalMapTexturePropertyName);
             LoadTextureWithCallbacks(materialMapperContext, TextureType.NormalMap, textureValue, CheckTextureOffsetAndScaling, ApplyNormalMapTexture);

@@ -4,40 +4,44 @@ using UnityEngine;
 
 public class MaterialCreator : MonoBehaviour
 {
-    Shader shader;
-    [SerializeField]
-    Material currentMat;
-
-    public void InitMaterial(Texture baseColor,Texture normalColor,Texture roughNess )
+    public Dictionary<string, string> materialPropers = new Dictionary<string, string>();
+    private void AddProperKeyValue()
     {
-        currentMat = null; 
-        currentMat = new Material( GameManager.Instance.GetMaterial());
-        currentMat.name = gameObject.name;
-        GetComponent<Renderer>().material = CreateMaterialFactor(baseColor, normalColor, roughNess);
-    }
-     
-    Material CreateMaterialFactor(Texture baseColor, Texture normalColor, Texture roughNess)
-    {
-   
-        if (baseColor != null)
-            currentMat.SetTexture("_MainTex", baseColor);
-        if (normalColor != null)
-            currentMat.SetTexture("_BumpMap", normalColor);
-        if (roughNess != null)
-            currentMat.SetTexture("_SpecGlossMap", roughNess);
-        return currentMat;
+        materialPropers.Add("BaseColor", "_BaseMap");
+        materialPropers.Add("Normal", "_BumpMap");
+        materialPropers.Add("Roughness", "_RoughnessMap");
     }
 
-    public void SetOutLineState(bool state, float width = 0.2f)
-    {
-        currentMat.SetInt("_EnableOutLine", state ? 1 : 0);
-        currentMat.SetFloat("_OutLineWidth", width);
-        currentMat.SetColor("_OutLineColor", Color.black);
-    }
+    public string ground = "Ground";
 
-    public void SetAlpha(float alpha)
+    public List<MaterialSetting> InitMaterial(Dictionary<string, Dictionary<string, Texture2D>> materialDice)
     {
-        currentMat.SetFloat("_AlphaScale", alpha);
+        AddProperKeyValue();
+
+        List<MaterialSetting> totalMaterials = new List<MaterialSetting>();
+        
+        foreach (var mat in materialDice)
+        {
+            MaterialSetting materialSetting=null;
+            if (mat.Key == ground)
+            {
+                 materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key,false);
+            }
+            else
+            {
+                 materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key,true);
+            }
+
+            foreach (var proprety in mat.Value)
+            {
+                materialSetting.SetTexture(materialPropers[proprety.Key], proprety.Value);
+            }
+            if (materialSetting != null)
+            {
+                totalMaterials.Add(materialSetting);
+            }
+        }
+        return totalMaterials;
     }
     
 }

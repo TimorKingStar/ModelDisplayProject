@@ -48,8 +48,9 @@ namespace TriLibCore.Samples
             {
                 _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
                 _assetLoaderOptions.ExternalDataMapper = ScriptableObject.CreateInstance<ExternalDataMapperSample>();
-                _assetLoaderOptions.TextureMappers = new TextureMapper[] { ScriptableObject.CreateInstance<TextureMapperSample>() };
+                 _assetLoaderOptions.TextureMappers = new TextureMapper[] { ScriptableObject.CreateInstance<TextureMapperSample>() };
             }
+
             AssetLoader.LoadModelFromStream(File.OpenRead(ModelPath), ModelPath, null, OnLoad, OnMaterialsLoad, OnProgress, OnError, null, _assetLoaderOptions);
         }
 
@@ -79,7 +80,12 @@ namespace TriLibCore.Samples
         /// <param name="assetLoaderContext">The context used to load the Model.</param>
         private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
         {
+             
             Debug.Log("Materials loaded. Model fully loaded.");
+            foreach (var item in assetLoaderContext.RootModel.AllTextures)
+            {
+                
+            }
         }
 
         /// <summary>
