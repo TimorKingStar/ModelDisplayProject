@@ -178,11 +178,23 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="line"></param>
     public void SetOutlineState(string line)
     {
-        Debug.Log("设置模型边缘光： " + line);
+        Debug.Log(">>>>>>>>Outline: " + line);
         float lineState = 0;
         if (float.TryParse(line,out lineState))
         { 
            GameManager.Instance.inputManage.OutLineStateEvent?.Invoke(lineState);
+        }
+    }
+
+    /// <summary>
+    /// 设置边缘光宽度
+    /// </summary>
+    /// <param name="width"></param>
+    public void SetOutlineWidth(string width)
+    {   
+        if (float.TryParse(width, out var w))
+        {
+            GameManager.Instance.inputManage.SetOutlineWidthEvent?.Invoke(w);
         }
     }
 
@@ -192,9 +204,8 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="alpha"></param>
     public void SetAlphaState(string alpha)
     {
-        Debug.Log("设置模型透明度： "+alpha);
-        float alpahState = 0;
-        if (float.TryParse(alpha, out alpahState))
+        Debug.Log(">>>>>>>>>>>>Alpha： "+alpha);
+        if (float.TryParse(alpha, out var alpahState))
         {
             GameManager.Instance.inputManage.AlphaStateEvent?.Invoke(alpahState);
         }

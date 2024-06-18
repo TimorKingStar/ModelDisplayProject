@@ -19,7 +19,7 @@ public class MaterialCreator : MonoBehaviour
         List<MaterialSetting> totalMaterials = new List<MaterialSetting>();
 
         foreach (var mat in materialDice)
-        {
+        {  
             MaterialSetting materialSetting = null;
             if (mat.Key == Utils.Ground)
             {

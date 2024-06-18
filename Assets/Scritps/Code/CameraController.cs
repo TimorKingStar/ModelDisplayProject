@@ -71,9 +71,11 @@ public class CameraController : MonoBehaviour
     void SetCameraInfo(ICamera info)
     {
         mainCamera.usePhysicalProperties = info.PhysicalCamera;
+        mainCamera.fieldOfView = info.FarClipPlane;
+        mainCamera.focalLength = info.FocalLength;
+
         //mainCamera.aspect = info.AspectRatio;
         //mainCamera.orthographic = info.Ortographic;
-        //mainCamera.fieldOfView = info.FarClipPlane;
         //mainCamera.nearClipPlane = info.NearClipPlane;
         //mainCamera.farClipPlane = info.FarClipPlane;
         //mainCamera.focalLength = info.FocalLength;

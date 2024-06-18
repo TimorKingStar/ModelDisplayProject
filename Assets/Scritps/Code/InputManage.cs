@@ -51,6 +51,10 @@ public class InputManage : MonoBehaviour
     /// </summary>
     public UnityEvent ResetHeadLayerShowEvent;
 
+    /// <summary>
+    /// …Ë÷√OutLineøÌ∂»
+    /// </summary>
+    public UnityEvent<float> SetOutlineWidthEvent;
 
     void Update()
     {

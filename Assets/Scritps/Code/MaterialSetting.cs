@@ -9,14 +9,7 @@ public class MaterialSetting
     Material material;
 
     public string name;
-    public string baseTex=Utils.ShaderBaseMap;
-    public string normalTex= Utils.ShaderNormalMap;
-    public string roughness= Utils.ShaderRoughnessMap;
-
     public bool OnOpenOutline; 
-    public string outline= Utils.ShaderEnableOutline;
-    public string alpha= Utils.ShaderAlpha;
-
 
     public Material GetMaterial()
     {
@@ -31,16 +24,26 @@ public class MaterialSetting
         OnOpenOutline = openOutLine;
     }
 
+
+    float minWidth = 0.01f;
+    float maxWidth = 0.5f;
+    public void SetOutlineWidth(float w)
+    {
+        w = Mathf.Clamp(w, minWidth, maxWidth);
+        if (OnOpenOutline)
+            material.SetFloat(Utils.ShaderOutlineWidth, w);
+    }
+
     public void SetAlpha(float alp)
     {
         if (OnOpenOutline)
-            material.SetFloat(alpha, alp);
+            material.SetFloat(Utils.ShaderAlpha, alp);
     }
 
     public void SetOutlineState(bool state)
     {
         if (OnOpenOutline)
-            material.SetFloat(outline, state ? 1 : 0);
+            material.SetFloat(Utils.ShaderEnableOutline, state ? 1 : 0);
     }
 
     public bool SetTexture(string proprety,Texture tex)
@@ -56,7 +59,7 @@ public class MaterialSetting
 
     bool HasProgrety(string p)
     {
-        return p == baseTex || p == normalTex || p == roughness;
+        return p == Utils.ShaderBaseMap || p == Utils.ShaderNormalMap || p == Utils.ShaderRoughnessMap;
     }
 
 }

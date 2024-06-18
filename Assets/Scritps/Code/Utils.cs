@@ -10,6 +10,7 @@ public class Utils
 
     public const string CameraPosition = "CameraPosition";
     public const string Ground = "Ground";
+
     public const string Muscle= "Muscles";
     public const string Skin= "Skin";
     public const string Skull= "Skull";
@@ -23,5 +24,5 @@ public class Utils
 
     public const string ShaderEnableOutline = "_EnableOutLine";
     public const string ShaderAlpha = "_AlphaScale";
-
+    public const string ShaderOutlineWidth = "_OutLineWidth"; 
 }

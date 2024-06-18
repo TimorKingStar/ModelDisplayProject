@@ -39,7 +39,16 @@ public class FileReferenceBinding : MonoBehaviour
     private void OnEnable()
     {
         GameManager.Instance.inputManage.OutLineStateEvent.AddListener(SetOutLineState);
+        GameManager.Instance.inputManage.SetOutlineWidthEvent.AddListener(SetOutLineWidth);
         GameManager.Instance.inputManage.AlphaStateEvent.AddListener(SetAlphaState);
+    }
+
+    private void SetOutLineWidth(float arg0)
+    {
+        foreach (var mat in listMaterials)
+        {
+            mat.SetOutlineWidth(arg0);
+        }
     }
 
     private void OnDisable()
