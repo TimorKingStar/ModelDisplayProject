@@ -15,7 +15,7 @@ public class Utils
     public const string Skull= "Skull";
 
     public const string OpenCameraRotateState = "OpenRotate";
-    public const string CloseCameraRotateState = "OpenRotate";
+    public const string CloseCameraRotateState = "CloseRotate";
 
     public const string ShaderBaseMap = "_BaseMap";
     public const string ShaderNormalMap = "_BumpMap";

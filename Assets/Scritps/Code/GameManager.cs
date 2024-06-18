@@ -15,7 +15,7 @@ public class GameManager : MonoSingleton<GameManager>
     public Material alphaMaterial;
 
     private void OnEnable()
-    {
+    {   
         inputManage.ResetCameraRotateEvent.AddListener(cameraController.ResetCameraTransform);
         inputManage.TouchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
         inputManage.RotateCameraEvent.AddListener(cameraController.RotateAroundCamera);

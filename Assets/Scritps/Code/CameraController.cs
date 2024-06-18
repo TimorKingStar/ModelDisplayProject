@@ -141,7 +141,9 @@ public class CameraController : MonoBehaviour
 
     public void ResetCameraTransform()
     {
-       
+        mainCamera.transform.position = afterInitPos;
+        mainCamera.transform.rotation = afterInitQua;
+
         targetRotationX = afterInitQua.eulerAngles.y;
         targetRotationY = afterInitQua.eulerAngles.x;
     }
