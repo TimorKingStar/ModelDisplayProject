@@ -15,7 +15,7 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="progress">下载进度</param>
     public static void DownloadModelProgress(string modelName, string progress)
     {
-
+        Debug.Log(modelName + " _Downprogress: " + progress);
 #if UNITY_IOS
         CallDownloadModelProgress(modelName, progress);
 #endif
@@ -30,8 +30,8 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="progress">加载进度</param>
     public static void LoadModelProgress(string modelName,string progress)
     {
+        Debug.Log(modelName + " _Loadprogress: " + progress);
 #if UNITY_IOS
-         Debug.Log(modelName + " _progress: " + progress);
         CallLoadModelProgress(modelName, progress);
 #endif
     }
@@ -54,11 +54,11 @@ public class GetMessageFromIOS : MonoBehaviour
     float dirX, dirY;
 
     //private void OnGUI()
-    //{   
+    //{
     //    if (GUILayout.Button(">>>>>走你", GUILayout.Width(200f), GUILayout.Height(30f)))
     //    {
-    //        string url = "file://"+Application.streamingAssetsPath + "/HeadMeters.zip";
-    //        SetModelurl(url); 
+    //        string url = "file://" + Application.streamingAssetsPath + "/MultiCharsCentimeters.zip";
+    //        SetModelurl(url);
     //    }
     //}
 
@@ -85,11 +85,11 @@ public class GetMessageFromIOS : MonoBehaviour
     /// </summary>
     public void TurnOnModelRotateState(string state)
     {
-        if (state=="OpenRotate")
+        if (state==Utils.OpenCameraRotateState)
         {
             GameManager.Instance.inputManage.TurnOnCameraRotateEvent?.Invoke(true);
-        }
-        else if (state == "CloseRotate")
+        } 
+        else if (state == Utils.CloseCameraRotateState)
         {
             GameManager.Instance.inputManage.TurnOnCameraRotateEvent?.Invoke(false);
         }
@@ -200,9 +200,9 @@ public class GetMessageFromIOS : MonoBehaviour
         }
         
     }
-
+    
     /// <summary>
-    /// 取消加载模型
+    /// 取消加载模型 这个暂时还有点问题
     /// </summary>
     public void CancleLoadModel()
     {   

@@ -16,9 +16,11 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void OnEnable()
     {
+        inputManage.ResetCameraRotateEvent.AddListener(cameraController.ResetCameraTransform);
         inputManage.TouchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
         inputManage.RotateCameraEvent.AddListener(cameraController.RotateAroundCamera);
         inputManage.TurnOnCameraRotateEvent.AddListener(cameraController.SetRotateState);
+        inputManage.CancleLoadedModelEvent.AddListener(AssetLoadManager.Instance.CancleDownload);
     }
 
     private void OnDisable()
@@ -26,5 +28,6 @@ public class GameManager : MonoSingleton<GameManager>
         inputManage.TouchZoomScaleEvent.RemoveListener(cameraController.ZoomInOut);
         inputManage.RotateCameraEvent.RemoveListener(cameraController.RotateAroundCamera);
         inputManage.TurnOnCameraRotateEvent.RemoveListener(cameraController.SetRotateState);
+        inputManage.CancleLoadedModelEvent.RemoveListener(AssetLoadManager.Instance.CancleDownload);
     }
 }

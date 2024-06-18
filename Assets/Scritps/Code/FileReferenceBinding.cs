@@ -20,8 +20,6 @@ using UnityEngine.Events;
 public class FileReferenceBinding : MonoBehaviour
 {
 
-    const string _groundName = "Ground";
-    const string _cameraName = "CameraPosition";
 
     FileLayerBinding  fileLayerBinding;
 
@@ -90,7 +88,7 @@ public class FileReferenceBinding : MonoBehaviour
 
         foreach (var m in loaderContext.GameObjects)
         {
-            if (m.Key.Name== _cameraName)
+            if (m.Key.Name== Utils.CameraPosition)
             {
                 _cameraTrans = m.Value.transform;
             }

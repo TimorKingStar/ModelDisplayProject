@@ -7,11 +7,7 @@ using Valve.Newtonsoft.Json;
 
 public class FileLayerBinding : MonoBehaviour
 {
-
-    const string muscle = "Muscles";
-    const string skin = "Skin";
-    const string skull = "Skull";
-
+    
     public GameObject _muscleGo;
     public GameObject _skinGo;
     public GameObject _skullGo;
@@ -23,15 +19,15 @@ public class FileLayerBinding : MonoBehaviour
         var rootGoDict = loaderContext.GameObjects;
         foreach (var go in rootGoDict)
         {
-            if (go.Key.Name== muscle)
+            if (go.Key.Name== Utils.Muscle)
             {
                 _muscleGo = go.Value; 
             }
-            else if(go.Key.Name == skin)
+            else if(go.Key.Name == Utils.Skin)
             {
                 _skinGo = go.Value;
             }
-            else if (go.Key.Name == skull)
+            else if (go.Key.Name == Utils.Skull)
             {
                 _skullGo = go.Value;
             }

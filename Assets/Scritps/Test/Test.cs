@@ -14,9 +14,7 @@ public class Test : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            fromIOS.SetHeadLayerShow(message + "+" + state.ToString());
-            fromIOS.SetAlphaState(alpha.ToString());
-            fromIOS.SetOutlineState(outLine.ToString());  
+            fromIOS.ResetCameraRotate();
         }
     }
 }

@@ -9,13 +9,14 @@ public class MaterialSetting
     Material material;
 
     public string name;
-    public string baseTex="_BaseMap";
-    public string normalTex="_BumpMap";
-    public string roughness= "_RoughnessMap";
+    public string baseTex=Utils.ShaderBaseMap;
+    public string normalTex= Utils.ShaderNormalMap;
+    public string roughness= Utils.ShaderRoughnessMap;
 
     public bool OnOpenOutline; 
-    public string outline="_EnableOutLine";
-    public string alpha= "_AlphaScale";
+    public string outline= Utils.ShaderEnableOutline;
+    public string alpha= Utils.ShaderAlpha;
+
 
     public Material GetMaterial()
     {

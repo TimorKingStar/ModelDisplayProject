@@ -93,6 +93,7 @@ public class CameraController : MonoBehaviour
         mainCamera.transform.rotation = beforeInitQua;
 
         intervalDistance = Vector3.Distance(beforeInitPos, currentObj.transform.position);
+
         targetRotationX = beforeInitQua.eulerAngles.y;
         targetRotationY = beforeInitQua.eulerAngles.x;
 
@@ -105,7 +106,7 @@ public class CameraController : MonoBehaviour
 
     float minView = 10f;
     float maxView = 110f;
-    
+     
     public void SetViewRange(float minView, float maxView)
     {
         this.minView = minView;
@@ -134,14 +135,15 @@ public class CameraController : MonoBehaviour
     [SerializeField] 
     float intervalDistance;
 
-    [SerializeField]
+    [SerializeField] 
      bool openRotateState;
 
 
     public void ResetCameraTransform()
     {
-       mainCamera.transform.position = afterInitPos ;
-        mainCamera.transform.rotation = afterInitQua ;
+       
+        targetRotationX = afterInitQua.eulerAngles.y;
+        targetRotationY = afterInitQua.eulerAngles.x;
     }
 
     public void SetRotateState(bool state)

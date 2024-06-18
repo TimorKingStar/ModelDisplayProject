@@ -7,34 +7,33 @@ public class MaterialCreator : MonoBehaviour
     public Dictionary<string, string> materialPropers = new Dictionary<string, string>();
     private void AddProperKeyValue()
     {
-        materialPropers.Add("BaseColor", "_BaseMap");
-        materialPropers.Add("Normal", "_BumpMap");
-        materialPropers.Add("Roughness", "_RoughnessMap");
+        materialPropers.Add(Utils.TextureBaseMap, Utils.ShaderBaseMap);
+        materialPropers.Add(Utils.TextureNormalMap, Utils.ShaderNormalMap);
+        materialPropers.Add(Utils.TextureRoughnessMap, Utils.ShaderRoughnessMap);
     }
-
-    public string ground = "Ground";
 
     public List<MaterialSetting> InitMaterial(Dictionary<string, Dictionary<string, Texture2D>> materialDice)
     {
         AddProperKeyValue();
 
         List<MaterialSetting> totalMaterials = new List<MaterialSetting>();
-        
+
         foreach (var mat in materialDice)
         {
-            MaterialSetting materialSetting=null;
-            if (mat.Key == ground)
+            MaterialSetting materialSetting = null;
+            if (mat.Key == Utils.Ground)
             {
-                 materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key,false);
+                materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key, false);
             }
             else
             {
-                 materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key,true);
+                materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key, true);
             }
 
             foreach (var proprety in mat.Value)
             {
-                materialSetting.SetTexture(materialPropers[proprety.Key], proprety.Value);
+                if (materialPropers.ContainsKey(proprety.Key))
+                    materialSetting.SetTexture(materialPropers[proprety.Key], proprety.Value);
             }
             if (materialSetting != null)
             {

@@ -9,6 +9,7 @@ using Unity.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Zip;
 using TriLibCore.Samples;
 using TriLibCore.Mappers;
+using System.Threading;
 
 /*
  1. 将模型以及贴图都放到压缩包里面，先将服务端的文件下载到本地。
@@ -39,12 +40,22 @@ using TriLibCore.Mappers;
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
 
+    string baseModelPath;
     string currentModelPath;
     string currentFilePath;
     string currentTextureDirectory;
     string currentTexturePath;
 
     public List<UnityEngine.GameObject> allGameObjects=new List<GameObject>();
+
+    private void Start()
+    {
+        baseModelPath = Application.persistentDataPath + "/Model";
+        if (!Directory.Exists(baseModelPath))
+        {
+            Directory.CreateDirectory(baseModelPath);
+        }
+    }
 
     void UnLoadGameobject()
     {
@@ -63,7 +74,8 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     {
         Debug.Log(">>>>>>>> Cancle loaded model");
         HttpManager.Instance.CancleDownload();
-        haltTask = true;
+        assetLoaderContext.CancellationTokenSource.Cancel();
+        UnLoadGameobject();
     }
 
     public void DownModeFromWeb(string webUrl)
@@ -71,7 +83,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         UnLoadGameobject();
         haltTask = false;
 
-        currentFilePath = Application.persistentDataPath + @"/" + FileUtils.GetFilenameWithoutExtension(webUrl);
+        currentFilePath = baseModelPath +"/"+ FileUtils.GetFilenameWithoutExtension(webUrl);
 
         currentModelPath = currentFilePath + "/Fbx/" + FileUtils.GetFilenameWithoutExtension(webUrl)+".fbx";
 
@@ -79,7 +91,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
         Debug.Log(currentFilePath); 
         
-        if (!File.Exists(currentFilePath))
+        if (!File.Exists(currentModelPath))
         {
             HttpManager.Instance.DownLoadAssets(webUrl).OnComplate(c =>
             {
@@ -102,6 +114,8 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     public bool haltTask;
     
     AssetLoaderOptions assetLoaderOptions;
+    AssetLoaderContext assetLoaderContext;
+
     void LoadModelMode()
     {   
         if (assetLoaderOptions == null)
@@ -109,10 +123,11 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
             assetLoaderOptions.ImportCameras = true;
             assetLoaderOptions.ImportMaterials = false;
+            
             assetLoaderOptions.MaterialMappers = new MaterialMapper[] { ScriptableObject.CreateInstance<StandardMaterialMapper>()};
         }
 
-        AssetLoader.LoadModelFromStream(File.OpenRead(currentModelPath), FileUtils.GetShortFilename(currentModelPath), FileUtils.GetFileExtension(currentModelPath), OnLoad, OnMaterialLoad, OnProgress,
+        assetLoaderContext = AssetLoader.LoadModelFromStream(File.OpenRead(currentModelPath), FileUtils.GetShortFilename(currentModelPath), FileUtils.GetFileExtension(currentModelPath), OnLoad, OnMaterialLoad, OnProgress,
         OnError, gameObject, assetLoaderOptions, null, haltTask);
 
         Debug.Log(">>>>>>>>>:Load Model Finished");
@@ -151,7 +166,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             byte[] data = File.ReadAllBytes(texPath);
             Texture2D texture = new Texture2D(1024, 1024);
             texture.name = FileUtils.GetFilenameWithoutExtension(texPath);
-            if (texture.LoadImage(data))
+            if (texture.LoadImage(data)) 
             {
                 if (TexNames.Length == 2)
                 {
@@ -182,11 +197,11 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     {
         if (data != null) 
         {  
-            string pathDirectory = Application.persistentDataPath; 
-            string filePath = pathDirectory + "/" + FileUtils.GetFilename(url);
-            if (!Directory.Exists(pathDirectory))
+            string filePath = baseModelPath +"/" + FileUtils.GetFilename(url);
+            if (!Directory.Exists(baseModelPath))
             {
-                Directory.CreateDirectory(pathDirectory);
+                Debug.LogError(">>>>>>>>>>baseModelPath Faill:");
+                Directory.CreateDirectory(baseModelPath);
             }                        
 
             File.WriteAllBytes(filePath, data);         
@@ -196,10 +211,10 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             {
                 #region 解压缩
                 FastZip zip = new FastZip();
-                Debug.Log(pathDirectory);
+               
                 if (FileUtils.GetFileExtension(filePath) == ".zip")
                 {
-                    zip.ExtractZip(filePath, pathDirectory, "");
+                    zip.ExtractZip(filePath, baseModelPath, "");
 
                 }
                 else
