@@ -40,7 +40,8 @@ public class CameraController : MonoBehaviour
     {
         if (camera != null)
         {
-            SetCameraInfo(camera);
+            ICameraInfo = camera;
+            SetCameraInfo();
         }
 
         if (trans != null)
@@ -68,11 +69,12 @@ public class CameraController : MonoBehaviour
         return Quaternion.Euler(targetAngle);
     }
 
-    void SetCameraInfo(ICamera info)
+    ICamera ICameraInfo;
+    void SetCameraInfo()
     {
-        mainCamera.usePhysicalProperties = info.PhysicalCamera;
-        mainCamera.fieldOfView = info.FarClipPlane;
-        mainCamera.focalLength = info.FocalLength;
+        mainCamera.usePhysicalProperties = ICameraInfo.PhysicalCamera;
+        mainCamera.fieldOfView = ICameraInfo.FarClipPlane;
+        mainCamera.focalLength = ICameraInfo.FocalLength;
 
         //mainCamera.aspect = info.AspectRatio;
         //mainCamera.orthographic = info.Ortographic;
@@ -82,9 +84,7 @@ public class CameraController : MonoBehaviour
         //mainCamera.sensorSize = info.SensorSize;
         //mainCamera.lensShift = info.LensShift;
         //mainCamera.gateFit = info.GateFitMode;
-
     }
-
 
     /// <summary>
     /// 初始化相机位置
@@ -140,7 +140,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] 
      bool openRotateState;
 
-
     public void ResetCameraTransform()
     {
         mainCamera.transform.position = afterInitPos;
@@ -148,6 +147,8 @@ public class CameraController : MonoBehaviour
 
         targetRotationX = afterInitQua.eulerAngles.y;
         targetRotationY = afterInitQua.eulerAngles.x;
+
+        SetCameraInfo();
     }
 
     public void SetRotateState(bool state)
@@ -160,7 +161,7 @@ public class CameraController : MonoBehaviour
     /// </summary>
     /// <param name="dir"></param>
     public void RotateAroundCamera(Vector2 dir)
-    {
+    {   
         if (!openRotateState)
         {
             return;

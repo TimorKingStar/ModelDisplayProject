@@ -53,15 +53,6 @@ public class GetMessageFromIOS : MonoBehaviour
     Vector2 dir = new Vector2();
     float dirX, dirY;
 
-    //private void OnGUI()
-    //{
-    //    if (GUILayout.Button(">>>>>走你", GUILayout.Width(200f), GUILayout.Height(30f)))
-    //    {
-    //        string url = "file://" + Application.streamingAssetsPath + "/MultiCharsCentimeters.zip";
-    //        SetModelurl(url);
-    //    }
-    //}
-
     /// <summary>
     /// 下载的链接
     /// </summary>
@@ -213,7 +204,7 @@ public class GetMessageFromIOS : MonoBehaviour
     }
     
     /// <summary>
-    /// 取消加载模型 这个暂时还有点问题
+    /// 取消加载模型
     /// </summary>
     public void CancleLoadModel()
     {   

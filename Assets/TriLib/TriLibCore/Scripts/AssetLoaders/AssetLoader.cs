@@ -1417,5 +1417,10 @@ namespace TriLibCore
         {
             throw contextualizedError;
         }
+
+        internal static void LoadModelFromFile(string path, Action<AssetLoaderContext> onLoad, Action<AssetLoaderContext> onMaterialLoad, Action<AssetLoaderContext, float> onProgress, Action<IContextualizedError> onError, GameObject gameObject, object assetLoaderOptions, object p, object haltTask)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

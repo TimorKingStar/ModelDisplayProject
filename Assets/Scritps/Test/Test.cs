@@ -14,12 +14,12 @@ public class Test : MonoBehaviour
     {
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
-        //    fromIOS.TurnOnModelRotateState(message); 
+        //    fromIOS.TurnOnModelRotateState(message);
         //}
 
-        //if (Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //    fromIOS.ResetCameraRotate();
-        //}
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            fromIOS.ResetCameraRotate();
+        }
     }
 }
