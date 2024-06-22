@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,11 +12,10 @@ public class GameManager : MonoSingleton<GameManager>
     public InputManage inputManage;
     public CameraController cameraController;
     public LightController lightController;
-
     public Material alphaMaterial;
 
     private void OnEnable()
-    {   
+    {
         inputManage.ResetCameraRotateEvent.AddListener(cameraController.ResetCameraTransform);
         inputManage.TouchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
         inputManage.RotateCameraEvent.AddListener(cameraController.RotateAroundCamera);
@@ -25,9 +25,16 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void OnDisable()
     {
-        inputManage.TouchZoomScaleEvent.RemoveListener(cameraController.ZoomInOut);
-        inputManage.RotateCameraEvent.RemoveListener(cameraController.RotateAroundCamera);
-        inputManage.TurnOnCameraRotateEvent.RemoveListener(cameraController.SetRotateState);
-        inputManage.CancleLoadedModelEvent.RemoveListener(AssetLoadManager.Instance.CancleDownload);
+        try
+        {
+            inputManage.TouchZoomScaleEvent.RemoveListener(cameraController.ZoomInOut);
+            inputManage.RotateCameraEvent.RemoveListener(cameraController.RotateAroundCamera);
+            inputManage.TurnOnCameraRotateEvent.RemoveListener(cameraController.SetRotateState);
+            inputManage.CancleLoadedModelEvent.RemoveListener(AssetLoadManager.Instance.CancleDownload);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
     }
 }

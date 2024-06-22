@@ -5,21 +5,12 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
     public GetMessageFromIOS fromIOS;
-    public string message;
-    public bool state;
+    public Vector3 rotate;
 
-    public float alpha;
-    public float outLine;
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    fromIOS.TurnOnModelRotateState(message);
-        //}
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            fromIOS.ResetCameraRotate();
-        }
+        fromIOS.SetLightMoveDirX(rotate.x.ToString());
+        fromIOS.SetLightMoveDirY(rotate.y.ToString());
+        fromIOS.SetLightMoveDirZ(rotate.z.ToString());
     }
 }

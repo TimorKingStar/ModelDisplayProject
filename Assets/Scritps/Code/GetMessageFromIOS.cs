@@ -49,9 +49,30 @@ public class GetMessageFromIOS : MonoBehaviour
 #endif
     }
 
+
+    [DllImport("__Internal")]
+    private static extern void CallLightRotateInfo(string lightInfo);
+
+    /// <summary>
+    /// 获取灯光的旋转信息 dir.x + "_" + dir.y + "_" + dir.z;   这种格式（20_15_3.2）
+    /// </summary>
+    /// <param name="info"></param>
+    public static void ReturnLightRotateInfo(string info)
+    {
+        CallLightRotateInfo(info);
+    }
+
+    //private void OnGUI()
+    //{
+    //    if (GUILayout.Button(">>>>>>>>>>加载",GUILayout.Width(200),GUILayout.Height(30)))
+    //    {
+    //        AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath+ "/MultiCharsCentimeters.zip");
+    //    }
+    //}
+
     float offset;
-    Vector2 dir = new Vector2();
-    float dirX, dirY;
+    Vector3 dir = new Vector3();
+   
 
     /// <summary>
     /// 下载的链接
@@ -93,9 +114,9 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="y">垂直方向旋转</param>
     public void SetLightMoveDirY(string y)
     {
-        if (float.TryParse(y, out dirY))
+        if (float.TryParse(y, out var dirY))
         {   
-            dir.x = 0; dir.y = dirY;
+            dir.x = 0; dir.y = dirY; dir.z = 0; 
             GameManager.Instance.lightController.Rotate(dir);
         }
         else
@@ -111,9 +132,9 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="y">垂直方向旋转</param>
     public void SetLightMoveDirX(string x)
     {
-        if (float.TryParse(x, out dirX) )
+        if (float.TryParse(x, out var dirX) )
         {
-            dir.x = dirX; dir.y = 0;
+            dir.x = dirX; dir.y = 0; dir.z = 0;
             GameManager.Instance.lightController.Rotate(dir);
         }
         else
@@ -122,21 +143,55 @@ public class GetMessageFromIOS : MonoBehaviour
     }
 
     /// <summary>
-    /// 设置灯光旋转偏移量 默认为 1
+    /// 获取灯光的旋转信息  
     /// </summary>
-    /// <param name="o"></param>
-    public void SetLightMoveOffset(string o)
+    public void GetLightInfo()
     {
-        if (float.TryParse(o, out offset))
+        GameManager.Instance.lightController.GetLightInfo();
+    }
+
+    /// <summary>
+    /// 复原灯光旋转
+    /// </summary>
+    public void ResetLightRotate()
+    {   
+        GameManager.Instance.lightController.ResetLight();
+    }   
+
+    /// <summary>
+    /// 设置灯光旋转
+    /// </summary>
+    /// <param name="x">水平方向旋转</param>
+    /// <param name="y">垂直方向旋转</param>
+    public void SetLightMoveDirZ(string z)
+    {
+        if (float.TryParse(z, out var dirZ))
         {
-            GameManager.Instance.lightController.SetOffSet(offset);
+            dir.x = 0; dir.y = 0; dir.z = dirZ;
+            GameManager.Instance.lightController.Rotate(dir);
         }
         else
         {
-            Debug.Log(">>>>>>>Get ios SetLightMoveOffset data error");
-
+            Debug.Log(">>>>>>>Get ios SetLightMoveDirZ data error");
         }
     }
+
+    ///// <summary>
+    ///// 设置灯光旋转偏移量 默认为 1
+    ///// </summary>
+    ///// <param name="o"></param>
+    //public void SetLightMoveOffset(string o)
+    //{
+    //    if (float.TryParse(o, out offset))
+    //    {
+    //        GameManager.Instance.lightController.SetOffSet(offset);
+    //    }
+    //    else
+    //    {
+    //        Debug.Log(">>>>>>>Get ios SetLightMoveOffset data error");
+
+    //    }
+    //}
 
     /// <summary>
     /// 设置分层显示模型   传输格式： Head+true  (模型名+设置状态)

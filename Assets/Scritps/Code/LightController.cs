@@ -6,26 +6,34 @@ public class LightController : MonoBehaviour
 {
 
     Light directionalLight;
+    Quaternion initQua;
     private void Awake()
     {
         directionalLight = GetComponent<Light>();
-        offset = 1;
+        initQua = directionalLight.transform.rotation;
     }
 
-    public float offset;
-    public void SetOffSet(float offset)
+    public void GetLightInfo()
     {
-       this.offset = offset;
-        Debug.Log("offset: "+offset);
+        GetMessageFromIOS.ReturnLightRotateInfo(GetLightRotation());
     }
 
-   public void Rotate(Vector2 dir)
-   {
-        dir.x *= offset;
-        dir.y *= offset;
+    public void ResetLight()
+    {
+        directionalLight.transform.rotation = initQua;
+    }
 
-        directionalLight.transform.Rotate(Vector3.up, dir.x, Space.World);
-        directionalLight.transform.Rotate(Vector3.right, dir.y, Space.World);
+    string GetLightRotation()
+    {
+        var dir=  directionalLight.transform.rotation.eulerAngles;
+        return dir.x + "_" + dir.y + "_" + dir.z;
+    }
+    
+    public void Rotate(Vector3 dir)
+    {   
+        directionalLight.transform.Rotate(Vector3.right, dir.x,Space.Self); 
+        directionalLight.transform.Rotate(Vector3.up, dir.y, Space.Self);
+        directionalLight.transform.Rotate(Vector3.forward, dir.z, Space.Self); 
     }
 
 }

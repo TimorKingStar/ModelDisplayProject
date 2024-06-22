@@ -34,7 +34,7 @@ Material:
     m_Floats:
     - _AlphaScale: 1
     - _BumpScale: 1
-    - _EnableOutLine: 1
+    - _EnableOutLine: 0
     - _OutLineWidth: 0.02
     - _Roughness: 1
     m_Colors:
