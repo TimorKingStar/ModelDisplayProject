@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainScene.unity
-    guid: a7bcd005f71a83e4dbbac3ec45e02a5c
+    path: Assets/ModelAnimator/DemoFiles/LoadFBX.unity
+    guid: b488aebb61d80a54387f2fa0e37abd68
   m_configObjects: {}
