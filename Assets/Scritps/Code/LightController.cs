@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LightController : MonoBehaviour
+public class LightController : MonoSingleton<LightController>
 {
 
     Light directionalLight;
     Quaternion initQua;
-    private void Awake()
+
+    public override void Init()
     {
         directionalLight = GetComponent<Light>();
         initQua = directionalLight.transform.rotation;

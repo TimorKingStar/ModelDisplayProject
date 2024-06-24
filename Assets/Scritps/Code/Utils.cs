@@ -24,5 +24,7 @@ public class Utils
 
     public const string ShaderEnableOutline = "_EnableOutLine";
     public const string ShaderAlpha = "_AlphaScale";
-    public const string ShaderOutlineWidth = "_OutLineWidth"; 
+    public const string ShaderOutlineWidth = "_OutLineWidth";
+
+    public const string AnimationScene = "AnimationScene";
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using UnityEngine.SceneManagement;
 
 public class GetMessageFromIOS : MonoBehaviour
 {
@@ -36,6 +37,8 @@ public class GetMessageFromIOS : MonoBehaviour
 #endif
     }
 
+
+
     [DllImport("__Internal")]
     private static extern void CallHeadLayerInfo(string modelInfo);
     /// <summary>
@@ -62,20 +65,30 @@ public class GetMessageFromIOS : MonoBehaviour
         CallLightRotateInfo(info);
     }
 
-    //private void OnGUI()
-    //{
-    //    if (GUILayout.Button(">>>>>>>>>>加载",GUILayout.Width(200),GUILayout.Height(30)))
-    //    {
-    //        AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath+ "/MultiCharsCentimeters.zip");
-    //    }
-    //}
+
+    //------------------------------
+
+    [DllImport("__Internal")]
+    private static extern void CalAnimationLengthOfClip(string lightInfo);
+
+    /// <summary>
+    /// 获取动画播放进度条 范围： 0-1
+    /// </summary>
+    /// <param name="info"></param>
+    public static void ReturnAnimationLengthOfClip(string info)
+    {
+
+#if UNITY_IOS
+        CallLightRotateInfo(info);
+#endif
+    }
 
     float offset;
     Vector3 dir = new Vector3();
    
 
     /// <summary>
-    /// 下载的链接
+    /// 下载模型链接
     /// </summary>
     /// <param name="url">文件以压缩包的方式给定</param> 
     public void SetModelurl(string url)
@@ -84,12 +97,83 @@ public class GetMessageFromIOS : MonoBehaviour
         AssetLoadManager.Instance.DownModeFromWeb(url);
     }
 
+    private void OnGUI1()
+    {
+        if (GUILayout.Button(">>>>>>>>>>加载模型", GUILayout.Width(200), GUILayout.Height(30)))
+        {
+            AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath + "/MultiCharsCentimeters.zip");
+        }
+        if (GUILayout.Button(">>>>>>>>>>加载动画"))
+        {
+            SetAnimationPath(Application.streamingAssetsPath + "/coreapi.fbx");
+        }
+
+        if (GUILayout.Button(">>>>>>>>>>播放"))
+        {
+            PlayAnimation("True");
+        }
+        if (GUILayout.Button(">>>>>>>>>>暂停"))
+        {
+            PlayAnimation("False");
+        }
+        if (GUILayout.Button(">>>>>>>>>>相机归位"))
+        {
+            ResetCameraRotate();
+        }
+        if (GUILayout.Button(">>>>>>>>>>跳展"))
+        {
+            SelectModelMode("1");
+        }
+    }
+
+
+    /// <summary>
+    ///  0 为模型展示模块，1 为动画展示模块
+    /// </summary>
+    /// <param name="mode"></param>
+    public void SelectModelMode(string mode)
+    {
+        if (mode=="1")
+        {
+            SceneManager.LoadScene(Utils.AnimationScene);
+        }
+    }
+  
+    /// <summary>
+    /// 加载动画的链接
+    /// </summary>
+    /// <param name="path"></param>
+    public void SetAnimationPath(string path)
+    {
+        AssetLoadManager.Instance.LoadAnimation(path);
+    }
+
+
+    /// <summary>
+    /// 暂停/播放 动画 play=True 播放  =False暂停
+    /// </summary>
+    /// <param name="play"></param>
+    public void PlayAnimation(string play)
+    {
+        bool state = false;
+        if (play== "True")
+        {
+            state = true;
+        }
+        else if(play == "False")
+        {
+            state = false;
+        }
+
+        InputManage.Instance.PlayAnimationEvent?.Invoke(state);
+    }
+
     /// <summary>
     /// 相机视角归位
     /// </summary>
     public void ResetCameraRotate()
     {
-        GameManager.Instance.inputManage.ResetCameraRotateEvent?.Invoke();
+        InputManage.Instance.ResetCameraRotateEvent?.Invoke();
     }
 
     /// <summary>
@@ -99,11 +183,11 @@ public class GetMessageFromIOS : MonoBehaviour
     {
         if (state==Utils.OpenCameraRotateState)
         {
-            GameManager.Instance.inputManage.TurnOnCameraRotateEvent?.Invoke(true);
+           InputManage.Instance.TurnOnCameraRotateEvent?.Invoke(true);
         } 
         else if (state == Utils.CloseCameraRotateState)
         {
-            GameManager.Instance.inputManage.TurnOnCameraRotateEvent?.Invoke(false);
+            InputManage.Instance.TurnOnCameraRotateEvent?.Invoke(false);
         }
     }
 
@@ -116,8 +200,8 @@ public class GetMessageFromIOS : MonoBehaviour
     {
         if (float.TryParse(y, out var dirY))
         {   
-            dir.x = 0; dir.y = dirY; dir.z = 0; 
-            GameManager.Instance.lightController.Rotate(dir);
+            dir.x = 0; dir.y = dirY; dir.z = 0;
+            LightController.Instance.Rotate(dir);
         }
         else
         {   
@@ -135,7 +219,7 @@ public class GetMessageFromIOS : MonoBehaviour
         if (float.TryParse(x, out var dirX) )
         {
             dir.x = dirX; dir.y = 0; dir.z = 0;
-            GameManager.Instance.lightController.Rotate(dir);
+            LightController.Instance.Rotate(dir);
         }
         else
         {  Debug.Log(">>>>>>>Get ios SetLightMoveDirX data error");
@@ -147,15 +231,15 @@ public class GetMessageFromIOS : MonoBehaviour
     /// </summary>
     public void GetLightInfo()
     {
-        GameManager.Instance.lightController.GetLightInfo();
+        LightController.Instance.GetLightInfo();
     }
 
     /// <summary>
     /// 复原灯光旋转
     /// </summary>
     public void ResetLightRotate()
-    {   
-        GameManager.Instance.lightController.ResetLight();
+    {
+        LightController.Instance.ResetLight();
     }   
 
     /// <summary>
@@ -168,7 +252,7 @@ public class GetMessageFromIOS : MonoBehaviour
         if (float.TryParse(z, out var dirZ))
         {
             dir.x = 0; dir.y = 0; dir.z = dirZ;
-            GameManager.Instance.lightController.Rotate(dir);
+            LightController.Instance.Rotate(dir);
         }
         else
         {
@@ -205,7 +289,7 @@ public class GetMessageFromIOS : MonoBehaviour
             bool state;
             if (bool.TryParse(m[1],out state))
             {
-                GameManager.Instance.inputManage.SetHeadLayerShowEvent?.Invoke(m[0], state);
+               InputManage.Instance.SetHeadLayerShowEvent?.Invoke(m[0], state);
             }
         }
     }
@@ -215,7 +299,7 @@ public class GetMessageFromIOS : MonoBehaviour
     /// </summary>
     public void ResetHeadLayerShow()
     {
-        GameManager.Instance.inputManage.ResetHeadLayerShowEvent?.Invoke();
+        InputManage.Instance.ResetHeadLayerShowEvent?.Invoke();
     }
 
     /// <summary>
@@ -228,7 +312,7 @@ public class GetMessageFromIOS : MonoBehaviour
         float lineState = 0;
         if (float.TryParse(line,out lineState))
         { 
-           GameManager.Instance.inputManage.OutLineStateEvent?.Invoke(lineState);
+          InputManage.Instance.OutLineStateEvent?.Invoke(lineState);
         }
     }
 
@@ -240,7 +324,7 @@ public class GetMessageFromIOS : MonoBehaviour
     {   
         if (float.TryParse(width, out var w))
         {
-            GameManager.Instance.inputManage.SetOutlineWidthEvent?.Invoke(w);
+           InputManage.Instance.SetOutlineWidthEvent?.Invoke(w);
         }
     }
 
@@ -253,7 +337,7 @@ public class GetMessageFromIOS : MonoBehaviour
         Debug.Log(">>>>>>>>>>>>Alpha： "+alpha);
         if (float.TryParse(alpha, out var alpahState))
         {
-            GameManager.Instance.inputManage.AlphaStateEvent?.Invoke(alpahState);
+           InputManage.Instance.AlphaStateEvent?.Invoke(alpahState);
         }
         
     }
@@ -263,7 +347,7 @@ public class GetMessageFromIOS : MonoBehaviour
     /// </summary>
     public void CancleLoadModel()
     {   
-        GameManager.Instance.inputManage.CancleLoadedModelEvent?.Invoke();
+        InputManage.Instance.CancleLoadedModelEvent?.Invoke();
     }
 
 }

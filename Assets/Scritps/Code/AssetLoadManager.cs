@@ -46,9 +46,6 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     string currentTextureDirectory;
     string currentTexturePath;
     public GameObject currentModel;
-    public List<UnityEngine.GameObject> allGameObjects=new List<GameObject>();
-
-    public bool haltTask;
 
     AssetLoaderOptions assetLoaderOptions;
     AssetLoaderContext assetLoaderContext;
@@ -62,17 +59,16 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
+    private void OnEnable()
+    {
+        InputManage.Instance.CancleLoadedModelEvent.AddListener(CancleDownload);
+    }
+
+     
     void UnLoadGameobject()
     {
-        if (allGameObjects.Count > 0)
-        {
-            foreach (var go in allGameObjects)
-            {
-                Destroy(go);
-            }
-
-            allGameObjects.Clear();
-        }
+        if (currentModel != null)
+            Destroy(currentModel);
     }
 
     public void CancleDownload()
@@ -83,10 +79,26 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         UnLoadGameobject();
     }
 
+
+    public void LoadAnimation(string animPath)
+    {
+        if (File.Exists(animPath))
+        {
+            if (assetLoaderOptions == null)
+            {
+                assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
+                assetLoaderOptions.ImportCameras = true;
+            }
+
+            assetLoaderContext = AssetLoader.LoadModelFromStream(File.OpenRead(animPath), FileUtils.GetShortFilename(animPath), FileUtils.GetFileExtension(animPath), LoadAnimation, null, OnProgress,
+            OnError, gameObject, assetLoaderOptions, null, false);
+        }
+    }
+
+
     public void DownModeFromWeb(string webUrl)
     {
         UnLoadGameobject();
-        haltTask = false;
 
         currentFilePath = baseModelPath +"/"+ FileUtils.GetFilenameWithoutExtension(webUrl);
 
@@ -117,30 +129,24 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     }
 
 
-
     void LoadModelMode()
     {   
         if (assetLoaderOptions == null)
         {
             assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
             assetLoaderOptions.ImportCameras = true;
-            assetLoaderOptions.ImportMaterials = false;
-            
-            assetLoaderOptions.MaterialMappers = new MaterialMapper[] { ScriptableObject.CreateInstance<StandardMaterialMapper>()};
         }
 
         assetLoaderContext = AssetLoader.LoadModelFromStream(File.OpenRead(currentModelPath), FileUtils.GetShortFilename(currentModelPath), FileUtils.GetFileExtension(currentModelPath), OnLoad, OnMaterialLoad, OnProgress,
-        OnError, gameObject, assetLoaderOptions, null, haltTask);
+        OnError, gameObject, assetLoaderOptions, null, false);
 
         Debug.Log(">>>>>>>>>:Load Model Finished");
 
-//FREDERIK:
-        LoadAnimation();
     }
 
-    void LoadAnimation()
+    void LoadAnimation(AssetLoaderContext loaderContext)
     {
-        GameObject animationContainer = assetLoaderContext.RootGameObject;
+        GameObject animationContainer = loaderContext.RootGameObject;
         if (animationContainer.TryGetComponent(out Animation a))
         {
             var l_animationClips = a.GetAllAnimationClips();
@@ -152,13 +158,14 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         else
             print("WARNING: there was no animation on the loaded fbx");
     }
+
     //END
 
     void RenderModel()
     {
         if (File.Exists(currentModelPath) )
-        {
-            //LoadTexture();        // we don't need to download textures
+        {   
+            LoadTexture();        // we need to download textures
             LoadModelMode(); 
         }
         else
@@ -259,7 +266,6 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
-
     private void OnLoad(AssetLoaderContext  loaderContext)
     {
         loaderContext.RootGameObject.SetActive(false);
@@ -267,14 +273,9 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
-        return;
-        //We don't need to download materials
+        //We  need to set materials
         currentModel = loaderContext.RootGameObject;
-        foreach (var g in loaderContext.GameObjects)
-        {
-            allGameObjects.Add(g.Value);
-        }
-
+      
         var fileReference= currentModel.AddComponent<FileReferenceBinding>();
         fileReference.Init(loaderContext,allModelTexture);
 

@@ -26,8 +26,8 @@ public class FileReferenceBinding : MonoBehaviour
     public void SetFileReferenceBinding(FileLayerBinding binding)
     {
         fileLayerBinding = binding;
-        GameManager.Instance.inputManage.SetHeadLayerShowEvent.AddListener(fileLayerBinding.SetHeadActive );
-        GameManager.Instance.inputManage.ResetHeadLayerShowEvent.AddListener(fileLayerBinding.ResetHeadActive);
+       InputManage.Instance.SetHeadLayerShowEvent.AddListener(fileLayerBinding.SetHeadActive );
+        InputManage.Instance.ResetHeadLayerShowEvent.AddListener(fileLayerBinding.ResetHeadActive);
     }
 
     [SerializeField]
@@ -38,9 +38,9 @@ public class FileReferenceBinding : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.inputManage.OutLineStateEvent.AddListener(SetOutLineState);
-        GameManager.Instance.inputManage.SetOutlineWidthEvent.AddListener(SetOutLineWidth);
-        GameManager.Instance.inputManage.AlphaStateEvent.AddListener(SetAlphaState);
+        InputManage.Instance.OutLineStateEvent.AddListener(SetOutLineState);
+        InputManage.Instance.SetOutlineWidthEvent.AddListener(SetOutLineWidth);
+        InputManage.Instance.AlphaStateEvent.AddListener(SetAlphaState);
     }
 
     private void SetOutLineWidth(float arg0)
@@ -51,18 +51,6 @@ public class FileReferenceBinding : MonoBehaviour
         }
     }
 
-    private void OnDisable()
-    {
-        try
-        {
-            GameManager.Instance.inputManage.OutLineStateEvent.RemoveListener(SetOutLineState);
-            GameManager.Instance.inputManage.AlphaStateEvent.RemoveListener(SetAlphaState);
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-        }
-    }
 
     private void SetAlphaState(float arg0)
     {
@@ -82,7 +70,6 @@ public class FileReferenceBinding : MonoBehaviour
     }
 
     public List<MaterialSetting> listMaterials = new List<MaterialSetting>();
-
 
     public void Init(AssetLoaderContext loaderContext, Dictionary<string, Dictionary<string, Texture2D>> allModelTexture)
     {
@@ -122,7 +109,7 @@ public class FileReferenceBinding : MonoBehaviour
            tempCamera = loaderContext.RootModel.AllCameras[0];
         }
 
-        GameManager.Instance.cameraController.SetCameraInfo(_rootModel, _cameraTrans, tempCamera);
+          CameraController.Instance.SetCameraInfo(_rootModel, _cameraTrans, tempCamera);
 
 
         var camera = GetComponentInChildren<Camera>();

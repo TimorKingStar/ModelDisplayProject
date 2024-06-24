@@ -23,11 +23,11 @@ public class MaterialCreator : MonoBehaviour
             MaterialSetting materialSetting = null;
             if (mat.Key == Utils.Ground)
             {
-                materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key, false);
+                materialSetting = new MaterialSetting(InputManage.Instance.alphaMaterial, mat.Key, false);
             }
             else
             {
-                materialSetting = new MaterialSetting(GameManager.Instance.alphaMaterial, mat.Key, true);
+                materialSetting = new MaterialSetting(InputManage.Instance.alphaMaterial, mat.Key, true);
             }
 
             foreach (var proprety in mat.Value)

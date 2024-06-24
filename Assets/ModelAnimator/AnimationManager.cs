@@ -7,7 +7,7 @@ public class AnimationManager : MonoBehaviour
     /// The animation attached to the radical character (easiest if you put the character in the scene and drag it here)
     /// </summary>
     public Animation m_Animation;
-    public RectTransform playbackProgress; // You can choose any object, but new Unity UI is best, because it's independent of camera location
+    //public RectTransform playbackProgress; // You can choose any object, but new Unity UI is best, because it's independent of camera location
     /// <summary>
     /// Dictionary that stores the downloaded animations by name, so you can easily access them at any point
     /// </summary>
@@ -15,6 +15,13 @@ public class AnimationManager : MonoBehaviour
     AnimationClip currentAnimation;
     float lengthOfClip;
 
+    private void OnEnable()
+    {
+        InputManage.Instance.PlayAnimationEvent.AddListener(PlayAnim);
+       
+    }
+
+    
     /// <summary>
     /// Call this once the AssetLoaderContext has finished loading, see TmpGUI.cs
     /// </summary>
@@ -33,6 +40,8 @@ public class AnimationManager : MonoBehaviour
         }
     }
 
+   
+
     /// <summary>
     /// The AssetLoadManager assumes there is always only one clip present, as it gets destroyed when a new animation is loaded
     /// </summary>
@@ -41,7 +50,6 @@ public class AnimationManager : MonoBehaviour
     {
         print("Received animation: " + clip.name);
         clip.legacy = true;
-
         if (m_Animation.GetClipCount() > 0)
         {
             try
@@ -56,7 +64,7 @@ public class AnimationManager : MonoBehaviour
         m_Animation.AddClip(clip, clip.name); //the names of AddClip and clip must match, 
         m_Animation.clip = clip;
         lengthOfClip = clip.length;
-        playbackProgress.localScale = new Vector3(0, 1, 1);
+      //  playbackProgress.localScale = new Vector3(0, 1, 1);
         currentAnimation = clip;
     }
 
@@ -66,14 +74,47 @@ public class AnimationManager : MonoBehaviour
         {
             // Update the progress bar
             foreach (AnimationState state in m_Animation)
-            {
+            {   
                 float currentTime = state.time;
                 if (currentTime > 0)
                 {
                     float scale = currentTime / lengthOfClip;
-                    playbackProgress.localScale = new Vector3(scale, 1, 1);
+                    //  playbackProgress.localScale = new Vector3(scale, 1, 1);
+                   GetMessageFromIOS.ReturnAnimationLengthOfClip(scale.ToString());
                 }
             }
+        }
+    }
+
+    public void PlayAnim(bool play)
+    {
+        if (m_Animation.GetClipCount() > 0)
+        {
+            if (play)
+            {
+                if (m_Animation.isPlaying)
+                {
+                    foreach (AnimationState state in m_Animation)
+                    {
+                        if (state.speed == 0)
+                        {
+                            state.speed = 1;
+                        }
+                    }
+                }
+                else
+                {
+                    m_Animation.Play();
+                }
+            }
+            else
+            {
+                Pause();
+            }
+        }
+        else
+        {
+            Debug.Log(">>>>>>>>>>> AnimationClip is null");
         }
     }
 
@@ -81,20 +122,21 @@ public class AnimationManager : MonoBehaviour
     /// Play back an animation by name (the one you chose when storing it, not necessarily the name of the clip)
     /// </summary>
     /// <param name="animationName"></param>
-    public void PlayAnimation(string animationName)
+    public void PlayAnimation(string animationClipName )
     {
-        if (!m_Animations.ContainsKey(animationName))
+        if (!m_Animations.ContainsKey(animationClipName))
         {
-            print("WARNING: Dictionary does not contain a clip named " + animationName);
+            print("WARNING: Dictionary does not contain a clip named " + animationClipName);
             return;
         }
-        AnimationClip activeAnimation = m_Animations[animationName];
+
+        AnimationClip activeAnimation = m_Animations[animationClipName];
         
         m_Animation.AddClip(activeAnimation, activeAnimation.name); //the names of AddClip and clip must match, 
         m_Animation.clip = activeAnimation;
         m_Animation.Play();
         lengthOfClip = activeAnimation.length;
-        playbackProgress.localScale = new Vector3(0, 1, 1);
+       // playbackProgress.localScale = new Vector3(0, 1, 1);
     }
 
     // call these functions from the UI of the scene
@@ -103,7 +145,7 @@ public class AnimationManager : MonoBehaviour
     {
         print("Playing back animation, clips: " + m_Animation.GetClipCount());
         m_Animation.Play();
-        playbackProgress.localScale = new Vector3(0, 1, 1);
+      //  playbackProgress.localScale = new Vector3(0, 1, 1);
     }
 
     /// <summary>
@@ -137,6 +179,7 @@ public class AnimationManager : MonoBehaviour
         }
     }
 
+
     /// <summary>
     /// Stop and rewind the animation
     /// </summary>
@@ -146,7 +189,7 @@ public class AnimationManager : MonoBehaviour
         if (currentClip != null)
         {
             m_Animation.Stop();
-            playbackProgress.localScale = new Vector3(0, 1, 1);
+           // playbackProgress.localScale = new Vector3(0, 1, 1);
         }
     }
     #endregion

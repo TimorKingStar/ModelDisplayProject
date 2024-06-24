@@ -5,11 +5,12 @@
 using System;
 using UnityEngine;
 
-
 public class CameraOrbit : MonoBehaviour
 {
     public GameObject target;
-    public float distance = 10.0f;
+
+    public float initDistance=2.4f;
+    public float distance ;
 
     public float xSpeed = 250.0f;
     public float ySpeed = 120.0f;
@@ -20,42 +21,33 @@ public class CameraOrbit : MonoBehaviour
     float x = 0.0f;
     float y = 0.0f;
 
+    float initX;
+    float initY;
     void Start()
     {
         var angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
+
+        initDistance = Vector3.Distance(transform.position, target.transform.position);
+        distance = initDistance;
+
+        initX = x;
+        initY = y;
     }
+
+    private void OnEnable()
+    {
+        InputManage.Instance.RotateCameraEvent.AddListener(RotateCamera);
+        InputManage.Instance.ResetCameraRotateEvent.AddListener(ResetCameraInfo);
+        InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
+    }
+    
 
     float prevDistance;
 
     void LateUpdate()
     {
-        if (distance < 2) distance = 2;
-        distance -= Input.GetAxis("Mouse ScrollWheel") * 2;
-        if (target && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
-        {
-            var pos = Input.mousePosition;
-            var dpiScale = 1f;
-            //if (Screen.dpi < 1) dpiScale = 1;
-            //if (Screen.dpi < 200) dpiScale = 1;
-            //else dpiScale = Screen.dpi / 200f;
-
-            //if (pos.x < 380 * dpiScale && Screen.height - pos.y < 250 * dpiScale) return;
-
-
-            x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-            y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
-
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-            var rotation = Quaternion.Euler(y, x, 0);
-            var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rotation;
-            transform.position = position;
-
-        }
-
-
         if (Math.Abs(prevDistance - distance) > 0.001f)
         {
             prevDistance = distance;
@@ -64,6 +56,49 @@ public class CameraOrbit : MonoBehaviour
             transform.rotation = rot;
             transform.position = po;
         }
+    }
+
+
+    bool openMovent=true;
+    void SetCameraState(bool openMovent)
+    {
+      this.openMovent = openMovent;
+    }
+
+    private void RotateCamera(Vector2 move)
+    {
+        if (target && openMovent)
+        {
+            x += move.x * xSpeed * 0.02f;
+            y -= move.y * ySpeed * 0.02f;
+
+            y = ClampAngle(y, yMinLimit, yMaxLimit);
+            var rotation = Quaternion.Euler(y, x, 0);
+            var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+            transform.rotation = rotation;
+            transform.position = position;
+        }
+    }
+
+    public void ZoomInOut(float value)
+    {
+        distance += value * 2;
+        if (distance<2)
+        {
+            distance = 2;
+        }
+    }
+
+    public void ResetCameraInfo()
+    {
+        distance = initDistance;
+        x = initX;
+        y = initY;
+
+        var rotation = Quaternion.Euler(initY, initX, 0);
+        var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+        transform.rotation = rotation;
+        transform.position = position;
     }
 
     static float ClampAngle(float angle, float min, float max)

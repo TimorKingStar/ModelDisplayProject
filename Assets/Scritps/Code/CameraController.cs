@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using TriLibCore.Interfaces;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoSingleton<CameraController>
 {
     Camera mainCamera;
-    private void Awake()
+    public override void Init()
     {
         mainCamera = GetComponent<Camera>();
         _defaltPosition = mainCamera.transform.position;
         _defaltQuaternion = mainCamera.transform.rotation;
     }
     
+    void OnEnable()
+    {
+        InputManage.Instance.RotateCameraEvent.AddListener(RotateAroundCamera);
+        InputManage.Instance.ResetCameraRotateEvent.AddListener( ResetCameraTransform);
+        InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetRotateState);
+        InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
+    }
+
+
 
     [SerializeField]
     GameObject currentObj;
@@ -106,14 +115,16 @@ public class CameraController : MonoBehaviour
         afterInitQua = mainCamera.transform.rotation;
     }
 
+
     float minView = 10f;
     float maxView = 110f;
-     
+    
     public void SetViewRange(float minView, float maxView)
     {
         this.minView = minView;
         this.maxView = maxView;
     }
+
 
     /// <summary>
     /// value 小于0是放大，value大于0是缩小
@@ -125,10 +136,10 @@ public class CameraController : MonoBehaviour
         mainCamera.fieldOfView = Mathf.Clamp(viewValue, minView, maxView);
     }
     
-     float rotationSpeed = 200f;
+     float rotationSpeed = 50;
      float maxVerticalAngle = 60f;
-     float minVerticalAngle = -60f;
-     float lerpSpeed = 200f;
+     float minVerticalAngle = 0f;
+     
 
     [SerializeField]
     float targetRotationX = 0f;
@@ -137,14 +148,13 @@ public class CameraController : MonoBehaviour
     [SerializeField] 
     float intervalDistance;
 
-    [SerializeField] 
-     bool openRotateState;
+     
+     bool openRotateState=true;
 
     public void ResetCameraTransform()
     {
         mainCamera.transform.position = afterInitPos;
         mainCamera.transform.rotation = afterInitQua;
-
         targetRotationX = afterInitQua.eulerAngles.y;
         targetRotationY = afterInitQua.eulerAngles.x;
 
@@ -174,16 +184,24 @@ public class CameraController : MonoBehaviour
 
         if (currentObj)
         {
-            targetRotationX += dir.x * rotationSpeed * Time.deltaTime;
-            targetRotationY += dir.y * rotationSpeed * Time.deltaTime;
+            targetRotationX += dir.x * rotationSpeed ;
+            targetRotationY += dir.y * rotationSpeed ;
 
-            targetRotationY = Mathf.Clamp(targetRotationY, minVerticalAngle, maxVerticalAngle);
-
+            targetRotationY = ClampAngle(targetRotationY, minVerticalAngle, maxVerticalAngle);
             Quaternion targetRotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
-            mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, targetRotation, lerpSpeed * Time.deltaTime);
+            mainCamera.transform.rotation = targetRotation;
 
-            mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+            // mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+            mainCamera.transform.position = targetRotation * new Vector3(0.0f, 0.0f, -intervalDistance) + currentObj.transform.position;
         }
     }
 
+    static float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360)
+            angle += 360;
+        if (angle > 360)
+            angle -= 360;
+        return Mathf.Clamp(angle, min, max);
+    }
 }

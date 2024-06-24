@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class InputManage : MonoBehaviour
+public class InputManage : MonoSingleton<InputManage>
 {
+
+    public Material alphaMaterial;
+
     [SerializeField]
     float moveX;
     [SerializeField]
     float moveY;
-    [SerializeField]
-    float currentMoveValue; 
     
     Vector2 moveDirection = new Vector2();
+
+    public UnityEvent<bool> PlayAnimationEvent;
+
+    public UnityEvent<float> AnimationLengthOfClipEvent;
 
     /// <summary>
     /// 分层显示事件
@@ -56,7 +61,23 @@ public class InputManage : MonoBehaviour
     /// </summary>
     public UnityEvent<float> SetOutlineWidthEvent;
 
-    void Update()
+    private void OnDisable()
+    {
+        PlayAnimationEvent.RemoveAllListeners();
+        AnimationLengthOfClipEvent.RemoveAllListeners();
+        SetHeadLayerShowEvent.RemoveAllListeners();
+        RotateCameraEvent.RemoveAllListeners();
+        TouchZoomScaleEvent.RemoveAllListeners();
+        OutLineStateEvent.RemoveAllListeners();
+        AlphaStateEvent.RemoveAllListeners();
+        ResetCameraRotateEvent.RemoveAllListeners();
+        TurnOnCameraRotateEvent.RemoveAllListeners();
+        CancleLoadedModelEvent.RemoveAllListeners();
+        ResetHeadLayerShowEvent.RemoveAllListeners();
+        SetOutlineWidthEvent.RemoveAllListeners();
+    }
+
+    void LateUpdate()
     {
         TouchZoom();
         TouchSlider();
@@ -78,7 +99,7 @@ public class InputManage : MonoBehaviour
     void TouchZoom()
     {
 #if UNITY_EDITOR
-        TouchZoomScaleEvent?.Invoke(Input.GetAxis("Mouse ScrollWheel")*5f); 
+        TouchZoomScaleEvent?.Invoke(Input.GetAxis("Mouse ScrollWheel")*2f); 
 #endif
 
         if (Input.touchCount == 2)
@@ -103,8 +124,8 @@ public class InputManage : MonoBehaviour
 
     void Test()
     {
-        moveX = Input.GetAxis("Horizontal");
-        moveY = Input.GetAxis("Vertical");
+        moveX = Input.GetAxis("Horizontal")*Time.deltaTime;
+        moveY = Input.GetAxis("Vertical") * Time.deltaTime;
         moveDirection.x = -moveX;
         moveDirection.y = moveY;
         RotateCameraEvent?.Invoke(moveDirection);
@@ -122,18 +143,16 @@ public class InputManage : MonoBehaviour
 #endif
 
         if (Input.touchCount == 1)
-        {
+        {   
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
             {   
-                moveX = Input.GetAxis("Mouse X") ;
-                moveY = Input.GetAxis("Mouse Y") ;
+                moveX = Input.GetAxis("Mouse X")*Time.deltaTime ;
+                moveY = Input.GetAxis("Mouse Y") * Time.deltaTime;
 
                 moveDirection.x = -moveX;
                 moveDirection.y = moveY;
                 RotateCameraEvent?.Invoke(moveDirection);
-
-                Debug.Log("Mousex : " + moveX);
-                Debug.Log("Mousey : " + moveY);
+                
             }
             else
             {   
