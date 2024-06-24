@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TriLibCore;
+using TriLibCore.Extensions;
 using System;
 using TriLibCore.Utils;
 using System.IO;
@@ -39,14 +40,18 @@ using System.Threading;
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
-
     string baseModelPath;
     string currentModelPath;
     string currentFilePath;
     string currentTextureDirectory;
     string currentTexturePath;
-
+    public GameObject currentModel;
     public List<UnityEngine.GameObject> allGameObjects=new List<GameObject>();
+
+    public bool haltTask;
+
+    AssetLoaderOptions assetLoaderOptions;
+    AssetLoaderContext assetLoaderContext;
 
     private void Start()
     {
@@ -111,10 +116,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
-    public bool haltTask;
-    
-    AssetLoaderOptions assetLoaderOptions;
-    AssetLoaderContext assetLoaderContext;
+
 
     void LoadModelMode()
     {   
@@ -131,14 +133,32 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         OnError, gameObject, assetLoaderOptions, null, haltTask);
 
         Debug.Log(">>>>>>>>>:Load Model Finished");
+
+//FREDERIK:
+        LoadAnimation();
     }
 
-    
+    void LoadAnimation()
+    {
+        GameObject animationContainer = assetLoaderContext.RootGameObject;
+        if (animationContainer.TryGetComponent(out Animation a))
+        {
+            var l_animationClips = a.GetAllAnimationClips();
+            if (l_animationClips.Count > 0)
+            {
+                GetComponent<AnimationManager>().StoreAnimation(l_animationClips[0]);
+            }
+        }
+        else
+            print("WARNING: there was no animation on the loaded fbx");
+    }
+    //END
+
     void RenderModel()
     {
         if (File.Exists(currentModelPath) )
         {
-            LoadTexture();
+            //LoadTexture();        // we don't need to download textures
             LoadModelMode(); 
         }
         else
@@ -153,6 +173,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     void LoadTexture()
     {
+
         allModelTexture.Clear();
         if (!Directory.Exists(currentTextureDirectory))
             return;
@@ -238,7 +259,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
     }
 
-    public GameObject currentModel;
+
     private void OnLoad(AssetLoaderContext  loaderContext)
     {
         loaderContext.RootGameObject.SetActive(false);
@@ -246,6 +267,8 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     
     private void OnMaterialLoad(AssetLoaderContext loaderContext)
     {
+        return;
+        //We don't need to download materials
         currentModel = loaderContext.RootGameObject;
         foreach (var g in loaderContext.GameObjects)
         {

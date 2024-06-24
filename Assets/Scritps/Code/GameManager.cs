@@ -14,13 +14,21 @@ public class GameManager : MonoSingleton<GameManager>
     public LightController lightController;
     public Material alphaMaterial;
 
-    private void OnEnable()
+
+    private void OnEnable() // this only works if the Camera Controller is set up correctly
     {
-        inputManage.ResetCameraRotateEvent.AddListener(cameraController.ResetCameraTransform);
-        inputManage.TouchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
-        inputManage.RotateCameraEvent.AddListener(cameraController.RotateAroundCamera);
-        inputManage.TurnOnCameraRotateEvent.AddListener(cameraController.SetRotateState);
-        inputManage.CancleLoadedModelEvent.AddListener(AssetLoadManager.Instance.CancleDownload);
+        try
+        {
+            inputManage.ResetCameraRotateEvent.AddListener(cameraController.ResetCameraTransform);
+            inputManage.TouchZoomScaleEvent.AddListener(cameraController.ZoomInOut);
+            inputManage.RotateCameraEvent.AddListener(cameraController.RotateAroundCamera);
+            inputManage.TurnOnCameraRotateEvent.AddListener(cameraController.SetRotateState);
+            inputManage.CancleLoadedModelEvent.AddListener(AssetLoadManager.Instance.CancleDownload);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
     }
 
     private void OnDisable()

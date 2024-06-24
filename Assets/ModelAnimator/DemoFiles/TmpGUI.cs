@@ -33,23 +33,23 @@ public class TmpGUI : MonoBehaviour
         }
 
         // call these on the AnimationManager
-        if (GUILayout.Button("Play"))
-        {
-            // Make sure to wait until the loading of the model is complete before pressing play, it's loading async
-            animationManager.PlayAnimation(activeClip.name); // you can change the name to something more meaningfull, if you want
-        }
-        if (GUILayout.Button("Pause"))
-        {
-            animationManager.Pause();
-        }
-        if (GUILayout.Button("Continue"))
-        {
-            animationManager.Resume(); 
-        }
-        if (GUILayout.Button("Stop"))
-        {
-            animationManager.Stop();
-        }
+        //if (GUILayout.Button("Play"))
+        //{
+        //    // Make sure to wait until the loading of the model is complete before pressing play, it's loading async
+        //    animationManager.PlayAnimation(activeClip.name); // you can change the name to something more meaningfull, if you want
+        //}
+        //if (GUILayout.Button("Pause"))
+        //{
+        //    animationManager.Pause();
+        //}
+        //if (GUILayout.Button("Continue"))
+        //{
+        //    animationManager.Resume(); 
+        //}
+        //if (GUILayout.Button("Stop"))
+        //{
+        //    animationManager.Stop();
+        //}
     }
 
     /// <summary>
@@ -64,14 +64,11 @@ public class TmpGUI : MonoBehaviour
             if (l_animationClips.Count > 0)
             {
                 activeClip = l_animationClips[0]; // there should be only one clip per download
+                animationManager.StoreAnimation(activeClip); //use this to store any animation by name. You can pick a more meaningful name, if you want
             }
-
-            animationManager.StoreAnimation(activeClip.name, activeClip); //use this to store any animation by name. You can pick a more meaningful name, if you want
         }
         else
             print("WARNING: there was no animation on the loaded fbx");
-        
-        //Destroy(obj.RootGameObject); // WARNING Do not use the TriLibCore Unload() function, it also destroys the animation clip
     }
 
     private void OnBeginLoad(bool obj)

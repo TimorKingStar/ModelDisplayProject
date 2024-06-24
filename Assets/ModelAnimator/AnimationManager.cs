@@ -7,11 +7,12 @@ public class AnimationManager : MonoBehaviour
     /// The animation attached to the radical character (easiest if you put the character in the scene and drag it here)
     /// </summary>
     public Animation m_Animation;
-    public RectTransform playbackProcess; // You can choose any object, but new Unity UI is best, because it's independent of camera location
+    public RectTransform playbackProgress; // You can choose any object, but new Unity UI is best, because it's independent of camera location
     /// <summary>
     /// Dictionary that stores the downloaded animations by name, so you can easily access them at any point
     /// </summary>
     Dictionary<string, AnimationClip> m_Animations = new Dictionary<string, AnimationClip>();
+    AnimationClip currentAnimation;
     float lengthOfClip;
 
     /// <summary>
@@ -32,6 +33,33 @@ public class AnimationManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The AssetLoadManager assumes there is always only one clip present, as it gets destroyed when a new animation is loaded
+    /// </summary>
+    /// <param name="clip"></param>
+    public void StoreAnimation(AnimationClip clip)
+    {
+        print("Received animation: " + clip.name);
+        clip.legacy = true;
+
+        if (m_Animation.GetClipCount() > 0)
+        {
+            try
+            {
+                m_Animation.RemoveClip(currentAnimation);
+            }
+            catch
+            {
+                print("Failed to remove initial animation, please check your scene");
+            }
+        }
+        m_Animation.AddClip(clip, clip.name); //the names of AddClip and clip must match, 
+        m_Animation.clip = clip;
+        lengthOfClip = clip.length;
+        playbackProgress.localScale = new Vector3(0, 1, 1);
+        currentAnimation = clip;
+    }
+
     private void Update()
     {
         if (m_Animation.isPlaying && lengthOfClip != 0)
@@ -43,7 +71,7 @@ public class AnimationManager : MonoBehaviour
                 if (currentTime > 0)
                 {
                     float scale = currentTime / lengthOfClip;
-                    playbackProcess.localScale = new Vector3(scale, 1, 1);
+                    playbackProgress.localScale = new Vector3(scale, 1, 1);
                 }
             }
         }
@@ -66,7 +94,16 @@ public class AnimationManager : MonoBehaviour
         m_Animation.clip = activeAnimation;
         m_Animation.Play();
         lengthOfClip = activeAnimation.length;
-        playbackProcess.localScale = new Vector3(0, 1, 1);
+        playbackProgress.localScale = new Vector3(0, 1, 1);
+    }
+
+    // call these functions from the UI of the scene
+    #region Unity UI  
+    public void Play()
+    {
+        print("Playing back animation, clips: " + m_Animation.GetClipCount());
+        m_Animation.Play();
+        playbackProgress.localScale = new Vector3(0, 1, 1);
     }
 
     /// <summary>
@@ -109,8 +146,9 @@ public class AnimationManager : MonoBehaviour
         if (currentClip != null)
         {
             m_Animation.Stop();
-            playbackProcess.localScale = new Vector3(0, 1, 1);
+            playbackProgress.localScale = new Vector3(0, 1, 1);
         }
     }
+    #endregion
 }
 
