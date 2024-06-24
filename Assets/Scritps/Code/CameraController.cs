@@ -94,7 +94,7 @@ public class CameraController : MonoSingleton<CameraController>
         //mainCamera.lensShift = info.LensShift;
         //mainCamera.gateFit = info.GateFitMode;
     }
-
+     
     /// <summary>
     /// 初始化相机位置
     /// </summary>

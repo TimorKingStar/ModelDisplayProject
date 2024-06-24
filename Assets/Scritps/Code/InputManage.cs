@@ -76,7 +76,7 @@ public class InputManage : MonoSingleton<InputManage>
         ResetHeadLayerShowEvent.RemoveAllListeners();
         SetOutlineWidthEvent.RemoveAllListeners();
     }
-
+      
     void LateUpdate()
     {
         TouchZoom();
@@ -114,7 +114,7 @@ public class InputManage : MonoSingleton<InputManage>
             }
 
             scaleFactor = (Vector2.Distance(lastTouch_1.position, lastTouch_2.position)
-                - Vector2.Distance(currentTouch_1.position, currentTouch_2.position));
+                - Vector2.Distance(currentTouch_1.position, currentTouch_2.position))*Time.deltaTime;
 
             TouchZoomScaleEvent?.Invoke(scaleFactor);
             lastTouch_1 = currentTouch_1;
@@ -131,7 +131,7 @@ public class InputManage : MonoSingleton<InputManage>
         RotateCameraEvent?.Invoke(moveDirection);
     } 
      
-
+     
     /// <summary>
     /// 滑动屏幕的时候，旋转模型或者灯光
     /// </summary>

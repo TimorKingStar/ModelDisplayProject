@@ -27,4 +27,5 @@ public class Utils
     public const string ShaderOutlineWidth = "_OutLineWidth";
 
     public const string AnimationScene = "AnimationScene";
+    public const string ModelScene = "ModelScene";
 }

@@ -42,7 +42,7 @@ public class CameraOrbit : MonoBehaviour
         InputManage.Instance.ResetCameraRotateEvent.AddListener(ResetCameraInfo);
         InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
     }
-    
+     
 
     float prevDistance;
 
@@ -69,9 +69,10 @@ public class CameraOrbit : MonoBehaviour
     {
         if (target && openMovent)
         {
-            x += move.x * xSpeed * 0.02f;
-            y -= move.y * ySpeed * 0.02f;
-
+           
+            x += move.x * xSpeed ;
+            y -= move.y * ySpeed ;
+             
             y = ClampAngle(y, yMinLimit, yMaxLimit);
             var rotation = Quaternion.Euler(y, x, 0);
             var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;

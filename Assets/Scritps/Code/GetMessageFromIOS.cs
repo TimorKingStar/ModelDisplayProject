@@ -133,10 +133,15 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="mode"></param>
     public void SelectModelMode(string mode)
     {
-        if (mode=="1")
+        if (mode == "1")
         {
             SceneManager.LoadScene(Utils.AnimationScene);
         }
+        else if (mode == "0")
+        {
+            SceneManager.LoadScene(Utils.ModelScene);
+        }
+
     }
   
     /// <summary>
