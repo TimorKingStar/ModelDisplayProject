@@ -97,11 +97,11 @@ public class GetMessageFromIOS : MonoBehaviour
         AssetLoadManager.Instance.DownModeFromWeb(url);
     }
 
-    private void OnGUI1()
+    private void OnGUI2()
     {
         if (GUILayout.Button(">>>>>>>>>>加载模型", GUILayout.Width(200), GUILayout.Height(30)))
         {
-            AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath + "/MultiCharsCentimeters.zip");
+            AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath + "/HeadMeters.zip");
         }
         if (GUILayout.Button(">>>>>>>>>>加载动画"))
         {
