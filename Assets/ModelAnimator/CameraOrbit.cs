@@ -41,6 +41,7 @@ public class CameraOrbit : MonoBehaviour
         InputManage.Instance.RotateCameraEvent.AddListener(RotateCamera);
         InputManage.Instance.ResetCameraRotateEvent.AddListener(ResetCameraInfo);
         InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
+        InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetCameraState);
     }
      
 

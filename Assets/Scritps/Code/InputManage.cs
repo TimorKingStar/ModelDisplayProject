@@ -76,7 +76,7 @@ public class InputManage : MonoSingleton<InputManage>
         ResetHeadLayerShowEvent.RemoveAllListeners();
         SetOutlineWidthEvent.RemoveAllListeners();
     }
-      
+    
     void LateUpdate()
     {
         TouchZoom();
