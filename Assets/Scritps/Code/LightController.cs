@@ -32,9 +32,9 @@ public class LightController : MonoSingleton<LightController>
     
     public void Rotate(Vector3 dir)
     {   
-        directionalLight.transform.Rotate(Vector3.right, dir.x,Space.Self); 
-        directionalLight.transform.Rotate(Vector3.up, dir.y, Space.Self);
-        directionalLight.transform.Rotate(Vector3.forward, dir.z, Space.Self); 
+        directionalLight.transform.Rotate(Vector3.right, dir.x,Space.World); 
+        directionalLight.transform.Rotate(Vector3.up, dir.y, Space.World);
+        directionalLight.transform.Rotate(Vector3.forward, dir.z, Space.World); 
     }
 
 }

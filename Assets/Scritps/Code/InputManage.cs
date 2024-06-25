@@ -126,7 +126,7 @@ public class InputManage : MonoSingleton<InputManage>
     {
         moveX = Input.GetAxis("Horizontal")*Time.deltaTime;
         moveY = Input.GetAxis("Vertical") * Time.deltaTime;
-        moveDirection.x = -moveX;
+        moveDirection.x = moveX;
         moveDirection.y = moveY;
         RotateCameraEvent?.Invoke(moveDirection);
     } 
@@ -149,7 +149,7 @@ public class InputManage : MonoSingleton<InputManage>
                 moveX = Input.GetAxis("Mouse X")*Time.deltaTime ;
                 moveY = Input.GetAxis("Mouse Y") * Time.deltaTime;
 
-                moveDirection.x = -moveX;
+                moveDirection.x = moveX;
                 moveDirection.y = moveY;
                 RotateCameraEvent?.Invoke(moveDirection);
                 

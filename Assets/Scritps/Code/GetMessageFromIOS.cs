@@ -69,7 +69,7 @@ public class GetMessageFromIOS : MonoBehaviour
     //------------------------------
 
     [DllImport("__Internal")]
-    private static extern void CalAnimationLengthOfClip(string lightInfo);
+    private static extern void CalAnimationLengthOfClip(string info);
 
     /// <summary>
     /// 获取动画播放进度条 范围： 0-1
@@ -77,9 +77,9 @@ public class GetMessageFromIOS : MonoBehaviour
     /// <param name="info"></param>
     public static void ReturnAnimationLengthOfClip(string info)
     {
-
+         
 #if UNITY_IOS
-        CallLightRotateInfo(info);
+        CalAnimationLengthOfClip(info);
 #endif
     }
 

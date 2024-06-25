@@ -70,7 +70,6 @@ public class CameraOrbit : MonoBehaviour
     {
         if (target && openMovent)
         {
-           
             x += move.x * xSpeed ;
             y -= move.y * ySpeed ;
              
