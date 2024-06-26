@@ -136,8 +136,9 @@ public class CameraController : MonoSingleton<CameraController>
         mainCamera.fieldOfView = Mathf.Clamp(viewValue, minView, maxView);
     }
     
-     float rotationSpeed = 50;
-     float maxVerticalAngle = 60f;
+     float rotationXSpeed = 100;
+    float rotationYSpeed = 50;
+    float maxVerticalAngle = 60f;
      float minVerticalAngle = 0f;
      
 
@@ -184,15 +185,12 @@ public class CameraController : MonoSingleton<CameraController>
 
         if (currentObj)
         {
-            targetRotationX += dir.x * rotationSpeed ;
-            targetRotationY += dir.y * rotationSpeed ;
-
+            targetRotationX += dir.x * rotationXSpeed ;
+            targetRotationY += dir.y * rotationYSpeed ;
             targetRotationY = ClampAngle(targetRotationY, minVerticalAngle, maxVerticalAngle);
-            Quaternion targetRotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
-            mainCamera.transform.rotation = targetRotation;
-
-            // mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
-            mainCamera.transform.position = targetRotation * new Vector3(0.0f, 0.0f, -intervalDistance) + currentObj.transform.position;
+            mainCamera.transform.rotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
+             mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+           // mainCamera.transform.position = targetRotation * new Vector3(0.0f, 0.0f, -intervalDistance) + currentObj.transform.position;
         }
     }
 
@@ -202,6 +200,7 @@ public class CameraController : MonoSingleton<CameraController>
             angle += 360;
         if (angle > 360)
             angle -= 360;
+
         return Mathf.Clamp(angle, min, max);
     }
 }

@@ -4,22 +4,55 @@ using UnityEngine;
 
 public class LightFixToSceen : MonoBehaviour
 {
-    [SerializeField]
-     float widthOffset;
-    [SerializeField]
-    float lengthOffset;
-    public float distance;
+    public RectTransform uiElement;  // UI 元素
+    Vector3 targetPos;
     private void Start()
     {
-        widthOffset = Camera.main.pixelWidth / 10;
-        lengthOffset = Camera.main.pixelHeight / 5;
+        targetPos = Vector3.one;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        Vector3 screenUpperRight = new Vector3( Camera.main.pixelWidth- widthOffset, Camera.main.pixelHeight- lengthOffset, distance);
-        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenUpperRight);
-        transform.position = worldPosition;
-        // transform.Translate(Vector3.forward * -distance);
+        // 获取 UI 元素的屏幕位置
+        Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, uiElement.position);
+
+        // 将屏幕位置转换为世界坐标
+        targetPos.x = screenPos.x;
+        targetPos.y = screenPos.y;
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(targetPos);
+
+        // 设置模型的位置
+        transform.position = worldPos;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    void LateUpdate1()
+    {
+        ViewWorldPoint();
+    }
+     
+    void ViewWorldPoint()
+    {
+        transform.position = Camera.main.ViewportToWorldPoint(targetPos);
+    }
+
+    void OnDrawGizmosSelected1()
+    {
+        Vector3 p = Camera.main.ViewportToWorldPoint(targetPos);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(p, 0.1F);
+    }
+
 }

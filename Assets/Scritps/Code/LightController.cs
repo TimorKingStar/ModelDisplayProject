@@ -21,7 +21,7 @@ public class LightController : MonoSingleton<LightController>
 
     private void Update()
     {
-        directionalLight.transform.rotation = lightArrow.transform.rotation;
+        lightArrow.transform.rotation = directionalLight.transform.rotation;
     }
 
     public void GetLightInfo()

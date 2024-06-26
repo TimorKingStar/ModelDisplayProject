@@ -143,7 +143,6 @@ public class InputManage : MonoSingleton<InputManage>
 #if UNITY_EDITOR
         Test();
 #endif
-
         if (Input.touchCount == 1)
         {   
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
