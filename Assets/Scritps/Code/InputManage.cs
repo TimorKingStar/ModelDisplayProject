@@ -84,8 +84,10 @@ public class InputManage : MonoSingleton<InputManage>
     }
 
     float scaleFactor;
+    float factorSpeed=2;
     Touch lastTouch_1;
     Touch lastTouch_2;
+
 
     Touch currentTouch_1;
     Touch currentTouch_2;
@@ -114,7 +116,7 @@ public class InputManage : MonoSingleton<InputManage>
             }
 
             scaleFactor = (Vector2.Distance(lastTouch_1.position, lastTouch_2.position)
-                - Vector2.Distance(currentTouch_1.position, currentTouch_2.position))*Time.deltaTime;
+                - Vector2.Distance(currentTouch_1.position, currentTouch_2.position))*Time.deltaTime* factorSpeed;
 
             TouchZoomScaleEvent?.Invoke(scaleFactor);
             lastTouch_1 = currentTouch_1;
@@ -127,7 +129,7 @@ public class InputManage : MonoSingleton<InputManage>
         moveX = Input.GetAxis("Horizontal")*Time.deltaTime;
         moveY = Input.GetAxis("Vertical") * Time.deltaTime;
         moveDirection.x = moveX;
-        moveDirection.y = moveY;
+        moveDirection.y = -moveY;
         RotateCameraEvent?.Invoke(moveDirection);
     } 
      
@@ -150,7 +152,7 @@ public class InputManage : MonoSingleton<InputManage>
                 moveY = Input.GetAxis("Mouse Y") * Time.deltaTime;
 
                 moveDirection.x = moveX;
-                moveDirection.y = moveY;
+                moveDirection.y = -moveY;
                 RotateCameraEvent?.Invoke(moveDirection);
                 
             }

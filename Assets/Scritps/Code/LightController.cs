@@ -7,11 +7,21 @@ public class LightController : MonoSingleton<LightController>
 
     Light directionalLight;
     Quaternion initQua;
+    public Transform lightArrow;
 
     public override void Init()
     {
         directionalLight = GetComponent<Light>();
         initQua = directionalLight.transform.rotation;
+    }
+    private void Start()
+    {
+        lightArrow.transform.rotation = initQua;
+    }
+
+    private void Update()
+    {
+        directionalLight.transform.rotation = lightArrow.transform.rotation;
     }
 
     public void GetLightInfo()

@@ -97,7 +97,7 @@ public class GetMessageFromIOS : MonoBehaviour
         AssetLoadManager.Instance.DownModeFromWeb(url);
     }
 
-    private void OnGUI2()
+    private void OnGUI1()
     {
         if (GUILayout.Button(">>>>>>>>>>╪стьдёпм", GUILayout.Width(200), GUILayout.Height(30)))
         {
