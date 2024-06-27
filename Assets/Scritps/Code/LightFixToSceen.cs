@@ -9,10 +9,23 @@ public class LightFixToSceen : MonoBehaviour
     private void Start()
     {
         targetPos = Vector3.one;
+        targetPos.z = 10f;
     }
 
+    private void OnEnable()
+    {
+        InputManage.Instance.MoveCameraStateEvent.AddListener(UpdatePosition);
+    }
+
+    [SerializeField]
+    bool openUpdate;
+    void UpdatePosition(bool open)
+    {
+        openUpdate = open;
+    }
     void LateUpdate()
     {
+        if (openUpdate) return;
         // 获取 UI 元素的屏幕位置
         Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, uiElement.position);
 

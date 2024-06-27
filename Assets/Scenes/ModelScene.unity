@@ -934,6 +934,9 @@ MonoBehaviour:
   SetOutlineWidthEvent:
     m_PersistentCalls:
       m_Calls: []
+  MoveCameraStateEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1571268632
 Transform:
   m_ObjectHideFlags: 0

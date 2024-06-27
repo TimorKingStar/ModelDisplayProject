@@ -61,6 +61,8 @@ public class InputManage : MonoSingleton<InputManage>
     /// </summary>
     public UnityEvent<float> SetOutlineWidthEvent;
 
+    public UnityEvent<bool> MoveCameraStateEvent;
+
     private void OnDisable()
     {
         PlayAnimationEvent.RemoveAllListeners();
@@ -76,7 +78,11 @@ public class InputManage : MonoSingleton<InputManage>
         ResetHeadLayerShowEvent.RemoveAllListeners();
         SetOutlineWidthEvent.RemoveAllListeners();
     }
-    
+
+    private void Start()
+    {
+        MoveCameraStateEvent?.Invoke(false);
+    }
     void LateUpdate()
     {
         TouchZoom();
@@ -146,7 +152,8 @@ public class InputManage : MonoSingleton<InputManage>
         if (Input.touchCount == 1)
         {   
             if (Input.GetTouch(0).phase == TouchPhase.Moved)
-            {   
+            {
+                MoveCameraStateEvent?.Invoke(true);
                 moveX = Input.GetAxis("Mouse X")*Time.deltaTime ;
                 moveY = Input.GetAxis("Mouse Y") * Time.deltaTime;
 
@@ -156,10 +163,12 @@ public class InputManage : MonoSingleton<InputManage>
                 
             }
             else
-            {   
+            {
+                MoveCameraStateEvent?.Invoke(false);
                 Debug.Log("Touch move sphase: "+Input.GetTouch(0).phase);
             }
         }
+        
     }
 
 }

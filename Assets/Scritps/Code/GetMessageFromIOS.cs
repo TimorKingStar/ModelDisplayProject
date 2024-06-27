@@ -99,16 +99,16 @@ public class GetMessageFromIOS : MonoBehaviour
 
     private void OnGUI1()
     {
-        if (GUILayout.Button(">>>>>>>>>>加载模型", GUILayout.Width(200), GUILayout.Height(30)))
+        if (GUILayout.Button(">>>>>>>>>>加载模型", GUILayout.Width(200), GUILayout.Height(100)))
         {
-            AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath + "/HeadMeters.zip");
+            AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath + "/MultiCharsCentimeters.zip");
         }
-        if (GUILayout.Button(">>>>>>>>>>加载动画"))
+        if (GUILayout.Button(">>>>>>>>>>加载动画", GUILayout.Width(200), GUILayout.Height(100)))
         {
             SetAnimationPath(Application.streamingAssetsPath + "/coreapi.fbx");
         }
 
-        if (GUILayout.Button(">>>>>>>>>>播放"))
+        if (GUILayout.Button(">>>>>>>>>>播放", GUILayout.Width(200), GUILayout.Height(100)))
         {
             PlayAnimation("True");
         }
