@@ -9,7 +9,7 @@ public class Test : MonoBehaviour
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-       
+        
     }
 
 }

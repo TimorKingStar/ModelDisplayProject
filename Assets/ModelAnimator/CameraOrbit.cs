@@ -5,6 +5,7 @@
 using System;
 using UnityEngine;
 
+
 public class CameraOrbit : MonoBehaviour
 {
     public GameObject target;
@@ -37,11 +38,11 @@ public class CameraOrbit : MonoBehaviour
     }
 
     private void OnEnable()
-    {
-        InputManage.Instance.RotateCameraEvent.AddListener(RotateCamera);
-        InputManage.Instance.ResetCameraRotateEvent.AddListener(ResetCameraInfo);
-        InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
-        InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetCameraState);
+    { 
+        // InputManage.Instance.RotateCameraEvent.AddListener(RotateCamera);
+        // InputManage.Instance.ResetCameraRotateEvent.AddListener(ResetCameraInfo);
+        // InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
+        // InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetCameraState);
     }
      
 

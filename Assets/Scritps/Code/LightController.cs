@@ -7,21 +7,31 @@ public class LightController : MonoSingleton<LightController>
 
     Light directionalLight;
     Quaternion initQua;
-    public Transform lightArrow;
-
+    
+    public float intensity;
     public override void Init()
     {
         directionalLight = GetComponent<Light>();
         initQua = directionalLight.transform.rotation;
     }
-    private void Start()
+    public void OnEnable()
     {
-        lightArrow.transform.rotation = initQua;
+      
     }
 
-    private void Update()
+    private void Start()
     {
-        lightArrow.transform.rotation = directionalLight.transform.rotation;
+       intensity=directionalLight.intensity;
+    }
+
+    public void SetIntensity(float inten)
+    {
+        inten=Mathf.Clamp(inten,0.1f,5f);
+        directionalLight.intensity=inten;
+    }
+     private void Update()
+    {
+        //lightArrow.transform.rotation = directionalLight.transform.rotation;
     }
 
     public void GetLightInfo()
@@ -33,7 +43,7 @@ public class LightController : MonoSingleton<LightController>
     {
         directionalLight.transform.rotation = initQua;
     }
-
+    
     string GetLightRotation()
     {
         var dir=  directionalLight.transform.rotation.eulerAngles;

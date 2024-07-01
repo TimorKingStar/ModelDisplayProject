@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,8 +20,8 @@ public class AnimationManager : MonoBehaviour
     private void OnEnable()
     {
         InputManage.Instance.PlayAnimationEvent.AddListener(PlayAnim);
-       
-    }
+       InputManage.Instance.PlayApppointAnimEvent.AddListener(PlayApppointAnima);
+    } 
 
     
     /// <summary>
@@ -67,7 +69,7 @@ public class AnimationManager : MonoBehaviour
       //  playbackProgress.localScale = new Vector3(0, 1, 1);
         currentAnimation = clip;
     }
-
+        
     private void Update()
     {
         if (m_Animation.isPlaying && lengthOfClip != 0)
@@ -77,15 +79,34 @@ public class AnimationManager : MonoBehaviour
             {   
                 float currentTime = state.time;
                 if (currentTime > 0)
-                {
+                {  
                     float scale = currentTime / lengthOfClip;
-                    //  playbackProgress.localScale = new Vector3(scale, 1, 1);
                    GetMessageFromIOS.ReturnAnimationLengthOfClip(scale.ToString());
                 }
             }
         }
     }
-
+    
+      
+    public void PlayApppointAnima(float p)
+    {
+         p= Mathf.Clamp(p,0,1);
+         if(m_Animation!=null)
+         {
+           if(m_Animation[currentAnimation.name]!=null)
+           {
+               m_Animation[currentAnimation.name].time=p*lengthOfClip;
+                PlayAnim(true);
+                StartCoroutine(DelayPause()); 
+                Debug.Log("TimeApppoint:"+p);
+           }  
+         }
+    }   
+    IEnumerator DelayPause()
+    {
+        yield return null;
+        PlayAnim(false);
+    }
     public void PlayAnim(bool play)
     {
         if (m_Animation.GetClipCount() > 0)
@@ -145,7 +166,7 @@ public class AnimationManager : MonoBehaviour
     {
         print("Playing back animation, clips: " + m_Animation.GetClipCount());
         m_Animation.Play();
-      //  playbackProgress.localScale = new Vector3(0, 1, 1);
+        
     }
 
     /// <summary>

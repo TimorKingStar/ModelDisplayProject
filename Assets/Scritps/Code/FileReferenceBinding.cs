@@ -7,16 +7,6 @@ using TriLibCore.Interfaces;
 using UnityEngine;
 using UnityEngine.Events;
 
-
-/*
-    1. 速写默写，自带动画，放大缩小模型，旋转视窗，光源旋转，需要outLine效果。
-    2. 单组静物，自带动画，多种材质，视窗旋转放大缩小，光源旋转，需要outLine效果，需要透明效果。
-    3. 石膏结构，任意旋转，放大缩小观察，光源旋转，需要outLine效果。
-    4. 头部结构，任意旋转，放大缩小观察，光源旋转，分皮肤，肌肉，骨骼层级进行观察，需要outLine效果。
-
-*/
-
-
 public class FileReferenceBinding : MonoBehaviour
 {
 
@@ -102,22 +92,23 @@ public class FileReferenceBinding : MonoBehaviour
                 }
             }
         }
+        
+        //CameraManager.Instance.SetCameraInfo(_cameraTrans,_rootModel.transform);
 
         ICamera tempCamera=null;
         if (loaderContext.RootModel.AllCameras.Count>0)
         {
            tempCamera = loaderContext.RootModel.AllCameras[0];
         }
-
-          CameraController.Instance.SetCameraInfo(_rootModel, _cameraTrans, tempCamera);
-
+        
+        
 
         var camera = GetComponentInChildren<Camera>();
         if (camera != null)
         {
             Destroy(camera);
-
         }
+
         var lod = GetComponentInChildren<LODGroup>();
         if (lod != null)
         {

@@ -11,6 +11,8 @@ public class FileLayerBinding : MonoBehaviour
     public GameObject _muscleGo;
     public GameObject _skinGo;
     public GameObject _skullGo;
+    public GameObject _fatGo;
+    public GameObject _insideGo;
 
     public List<GameObject> allGoList = new List<GameObject>();
 
@@ -30,6 +32,13 @@ public class FileLayerBinding : MonoBehaviour
             else if (go.Key.Name == Utils.Skull)
             {
                 _skullGo = go.Value;
+            }else if(go.Key.Name == Utils.Fat)
+            {
+                _fatGo =go.Value;
+
+            }else if(go.Key.Name == Utils.Inside)
+            {
+               _insideGo=go.Value;
             }
 
             allGoList.Add(go.Value);
@@ -76,6 +85,25 @@ public class FileLayerBinding : MonoBehaviour
                 modelInfo.skullGoList.Add(new ModelActiveInfo(r.gameObject.name, r.gameObject.activeSelf));
             }
         }
+
+        if (_fatGo != null)
+        {
+            modelInfo.fatGo = new ModelActiveInfo(_fatGo.name, _fatGo.activeSelf);
+            foreach (var r in _fatGo.GetComponentsInChildren<Renderer>())
+            {
+                modelInfo.fatGoList.Add(new ModelActiveInfo(r.gameObject.name, r.gameObject.activeSelf));
+            }
+        }
+        
+        if (_insideGo != null)
+        {   
+            modelInfo.insideGo = new ModelActiveInfo(_insideGo.name, _insideGo.activeSelf);
+            foreach (var r in _insideGo.GetComponentsInChildren<Renderer>())
+            {
+                modelInfo.insideGoList.Add(new ModelActiveInfo(r.gameObject.name, r.gameObject.activeSelf));
+            }
+        }
+        
     }
 
     void SetHeadInit()
@@ -120,15 +148,20 @@ public class HeadModelInfo
         muscleGoList = new List<ModelActiveInfo>();
         skinGoList = new List<ModelActiveInfo>();
         skullGoList = new List<ModelActiveInfo>();
+        fatGoList=new List<ModelActiveInfo>();
+        insideGoList=new List<ModelActiveInfo>();
     }
 
     public ModelActiveInfo muscleGo;
     public ModelActiveInfo skinGo;
     public ModelActiveInfo skullGo;
-
+     public ModelActiveInfo fatGo;
+    public ModelActiveInfo insideGo;
     public List<ModelActiveInfo> muscleGoList;
     public List<ModelActiveInfo> skinGoList;
     public List<ModelActiveInfo> skullGoList;
+    public List<ModelActiveInfo> fatGoList;
+    public List<ModelActiveInfo> insideGoList;
     
 }
 

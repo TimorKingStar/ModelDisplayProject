@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Battlehub.RTCommon;
 using TriLibCore.Interfaces;
 using UnityEngine;
 
@@ -15,10 +16,10 @@ public class CameraController : MonoSingleton<CameraController>
     
     void OnEnable()
     {
-        InputManage.Instance.RotateCameraEvent.AddListener(RotateAroundCamera);
-        InputManage.Instance.ResetCameraRotateEvent.AddListener( ResetCameraTransform);
-        InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetRotateState);
-        InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
+        // InputManage.Instance.RotateCameraEvent.AddListener(RotateAroundCamera);
+        // InputManage.Instance.ResetCameraRotateEvent.AddListener( ResetCameraTransform);
+        // InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetRotateState);
+        // InputManage.Instance.TouchZoomScaleEvent.AddListener(ZoomInOut);
     }
 
 
@@ -32,21 +33,28 @@ public class CameraController : MonoSingleton<CameraController>
     [SerializeField]
     Vector3 afterInitPos;
     Quaternion afterInitQua;
-    
 
     [SerializeField]
     Vector3 _defaltPosition;
     Quaternion _defaltQuaternion;
     ICamera cameraInfo;
+    
+     
+    public Transform cube;
+   void OnGUI()
+   {
+      if(GUILayout.Button("Init Camera",GUILayout.Width(200),GUILayout.Height(70)))
+      {
+         SetCameraInfo(cube.gameObject);
+      }
 
+   }
 
-    /// <summary>
-    /// 设置相机信息
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <param name="qua"></param>
     public void SetCameraInfo(GameObject obj, Transform trans = null, ICamera camera = null)
     {
+        _defaltPosition=transform.position;
+        _defaltQuaternion=transform.rotation;
+
         if (camera != null)
         {
             ICameraInfo = camera;
@@ -84,20 +92,8 @@ public class CameraController : MonoSingleton<CameraController>
         mainCamera.usePhysicalProperties = ICameraInfo.PhysicalCamera;
         mainCamera.fieldOfView = ICameraInfo.FarClipPlane;
         mainCamera.focalLength = ICameraInfo.FocalLength;
-
-        //mainCamera.aspect = info.AspectRatio;
-        //mainCamera.orthographic = info.Ortographic;
-        //mainCamera.nearClipPlane = info.NearClipPlane;
-        //mainCamera.farClipPlane = info.FarClipPlane;
-        //mainCamera.focalLength = info.FocalLength;
-        //mainCamera.sensorSize = info.SensorSize;
-        //mainCamera.lensShift = info.LensShift;
-        //mainCamera.gateFit = info.GateFitMode;
     }
      
-    /// <summary>
-    /// 初始化相机位置
-    /// </summary>
     public void InitCameraInfo()
     {   
         mainCamera.transform.position = beforeInitPos;
@@ -109,12 +105,13 @@ public class CameraController : MonoSingleton<CameraController>
         targetRotationY = beforeInitQua.eulerAngles.x;
 
         targetRotationY = Mathf.Clamp(targetRotationY, minVerticalAngle, maxVerticalAngle);
-        mainCamera.transform.rotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
-        mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+        var ration= Quaternion.Euler(targetRotationY, targetRotationX, 0f);
+        mainCamera.transform.rotation = ration;
+        mainCamera.transform.position = ration * new Vector3(0.0f, 0.0f, -intervalDistance) + currentObj.transform.position;
         afterInitPos = mainCamera.transform.position;
         afterInitQua = mainCamera.transform.rotation;
     }
-
+    
 
     float minView = 10f;
     float maxView = 110f;
@@ -127,7 +124,7 @@ public class CameraController : MonoSingleton<CameraController>
 
 
     /// <summary>
-    /// value 小于0是放大，value大于0是缩小
+    /// value 小锟斤拷0锟角放达拷value锟斤拷锟斤拷0锟斤拷锟斤拷小
     /// </summary>
     /// <param name="value"></param>
     public void ZoomInOut(float value)
@@ -147,9 +144,9 @@ public class CameraController : MonoSingleton<CameraController>
     [SerializeField]
     float targetRotationY = 0f;
     [SerializeField] 
-    float intervalDistance;
-
-     
+    float intervalDistance=10f;
+    
+    [SerializeField] 
      bool openRotateState=true;
 
     public void ResetCameraTransform()
@@ -167,10 +164,7 @@ public class CameraController : MonoSingleton<CameraController>
         openRotateState = state;
     }
 
-    /// <summary>
-    /// 相机围绕目标旋转
-    /// </summary>
-    /// <param name="dir"></param>
+
     public void RotateAroundCamera(Vector2 dir)
     {   
         if (!openRotateState)
@@ -188,9 +182,11 @@ public class CameraController : MonoSingleton<CameraController>
             targetRotationX += dir.x * rotationXSpeed ;
             targetRotationY += dir.y * rotationYSpeed ;
             targetRotationY = ClampAngle(targetRotationY, minVerticalAngle, maxVerticalAngle);
-            mainCamera.transform.rotation = Quaternion.Euler(targetRotationY, targetRotationX, 0f);
-             mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
-           // mainCamera.transform.position = targetRotation * new Vector3(0.0f, 0.0f, -intervalDistance) + currentObj.transform.position;
+            var targetRotation=  Quaternion.Euler(targetRotationY, targetRotationX, 0f);
+            mainCamera.transform.rotation = targetRotation;
+
+             //mainCamera.transform.position = currentObj.transform.position - mainCamera.transform.forward * intervalDistance;
+            mainCamera.transform.position = targetRotation * new Vector3(0.0f, 0.0f, -intervalDistance) + currentObj.transform.position;
         }
     }
 

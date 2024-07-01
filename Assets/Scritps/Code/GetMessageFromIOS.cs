@@ -9,57 +9,49 @@ public class GetMessageFromIOS : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void CallDownloadModelProgress(string modelName, string funcName);
-    /// <summary>
-    /// ÏÂÔØÄ£ĞÍ½ø¶È
-    /// </summary>
-    /// <param name="modelName">Ä£ĞÍÃû</param>
-    /// <param name="progress">ÏÂÔØ½ø¶È</param>
+    
     public static void DownloadModelProgress(string modelName, string progress)
     {
         Debug.Log(modelName + " _Downprogress: " + progress);
-#if UNITY_IOS
+     #if UNITY_EDITOR
+        return;
+     #endif
+     
         CallDownloadModelProgress(modelName, progress);
-#endif
+
     }
 
     [DllImport("__Internal")]
     private static extern void CallLoadModelProgress(string modelName,string progress);
-    /// <summary>
-    /// ¼ÓÔØÄ£ĞÍ½ø¶È
-    /// </summary>
-    /// <param name="modelName">Ä£ĞÍÃû</param>
-    /// <param name="progress">¼ÓÔØ½ø¶È</param>
+   
     public static void LoadModelProgress(string modelName,string progress)
     {
+
         Debug.Log(modelName + " _Loadprogress: " + progress);
-#if UNITY_IOS
-        CallLoadModelProgress(modelName, progress);
+#if UNITY_EDITOR
+         return;
 #endif
+        CallLoadModelProgress(modelName, progress);
     }
-
-
-
+    
     [DllImport("__Internal")]
     private static extern void CallHeadLayerInfo(string modelInfo);
-    /// <summary>
-    /// Í·²¿·Ö²ãÄ£ĞÍĞÅÏ¢
-    /// </summary>
-    /// <param name="modelInfo"></param>
+    
     public static void ReturnHeadModelInfo(string modelInfo)
     {
-#if UNITY_IOS
-         CallHeadLayerInfo(modelInfo);
+        
+ #if UNITY_EDITOR
+         return;
 #endif
+         CallHeadLayerInfo(modelInfo);
+
     }
 
 
     [DllImport("__Internal")]
     private static extern void CallLightRotateInfo(string lightInfo);
 
-    /// <summary>
-    /// »ñÈ¡µÆ¹âµÄĞı×ªĞÅÏ¢ dir.x + "_" + dir.y + "_" + dir.z;   ÕâÖÖ¸ñÊ½£¨20_15_3.2£©
-    /// </summary>
-    /// <param name="info"></param>
+   
     public static void ReturnLightRotateInfo(string info)
     {
         CallLightRotateInfo(info);
@@ -69,68 +61,79 @@ public class GetMessageFromIOS : MonoBehaviour
     //------------------------------
 
     [DllImport("__Internal")]
-    private static extern void CalAnimationLengthOfClip(string info);
+    private static extern void CallAnimationLengthOfClip(string info);
 
-    /// <summary>
-    /// »ñÈ¡¶¯»­²¥·Å½ø¶ÈÌõ ·¶Î§£º 0-1
-    /// </summary>
-    /// <param name="info"></param>
+  
     public static void ReturnAnimationLengthOfClip(string info)
     {
-         
-#if UNITY_IOS
-        CalAnimationLengthOfClip(info);
-#endif
+         #if UNITY_EDITOR
+         return;
+         #endif
+        CallAnimationLengthOfClip(info);
+
     }
 
     float offset;
     Vector3 dir = new Vector3();
    
 
-    /// <summary>
-    /// ÏÂÔØÄ£ĞÍÁ´½Ó
-    /// </summary>
-    /// <param name="url">ÎÄ¼şÒÔÑ¹Ëõ°üµÄ·½Ê½¸ø¶¨</param> 
+   
     public void SetModelurl(string url)
     {
         Debug.Log(">>>>>>>>>> Get Url From IOS:"+url);
         AssetLoadManager.Instance.DownModeFromWeb(url);
     }
-
+    
+    public float timeline;
     private void OnGUI1()
     {
-        if (GUILayout.Button(">>>>>>>>>>¼ÓÔØÄ£ĞÍ", GUILayout.Width(200), GUILayout.Height(100)))
+        if (GUILayout.Button(">>>>>>>>>>load Model", GUILayout.Width(200), GUILayout.Height(50)))
         {
-            AssetLoadManager.Instance.DownModeFromWeb(Application.streamingAssetsPath + "/MultiCharsCentimeters.zip");
+            AssetLoadManager.Instance.DownModeFromWeb(@"file://"+Application.streamingAssetsPath + "/MultiCharsCentimeters.zip");
         }
-        if (GUILayout.Button(">>>>>>>>>>¼ÓÔØ¶¯»­", GUILayout.Width(200), GUILayout.Height(100)))
+        if (GUILayout.Button(">>>>>>>>>>load Animation", GUILayout.Width(200), GUILayout.Height(50)))
         {
             SetAnimationPath(Application.streamingAssetsPath + "/coreapi.fbx");
         }
 
-        if (GUILayout.Button(">>>>>>>>>>²¥·Å", GUILayout.Width(200), GUILayout.Height(100)))
+        if (GUILayout.Button(">>>>>>>>>>Play Animation", GUILayout.Width(200), GUILayout.Height(50)))
         {
             PlayAnimation("True");
         }
-        if (GUILayout.Button(">>>>>>>>>>ÔİÍ£"))
+        if (GUILayout.Button(">>>>>>>>>>Pause Animation" ,GUILayout.Width(200), GUILayout.Height(50)))
         {
             PlayAnimation("False");
         }
-        if (GUILayout.Button(">>>>>>>>>>Ïà»ú¹éÎ»"))
+        if (GUILayout.Button(">>>>>>>>>>Reset Camera", GUILayout.Width(200), GUILayout.Height(50)))
         {
             ResetCameraRotate();
         }
-        if (GUILayout.Button(">>>>>>>>>>ÌøÕ¹"))
+        if (GUILayout.Button("LoadAnimationScene",GUILayout.Width(200), GUILayout.Height(50)))
         {
             SelectModelMode("1");
         }
+
+         if (GUILayout.Button("PlayTime",GUILayout.Width(200), GUILayout.Height(50)))
+        {
+             PlayApppointAnima(timeline.ToString());
+        }
+           if (GUILayout.Button("Intensity",GUILayout.Width(200), GUILayout.Height(50)))
+        {
+             SetLightIntensity(timeline.ToString());
+        }
     }
-
-
+    
     /// <summary>
-    ///  0 ÎªÄ£ĞÍÕ¹Ê¾Ä£¿é£¬1 Îª¶¯»­Õ¹Ê¾Ä£¿é
+    /// åŠ¨ç”»è¿›åº¦æ¡èŒƒå›´ 0-1ï¼Œå½“ä¼ å…¥0 æ—¶äººç‰©å›åˆ°å¤åŸçŠ¶æ€
     /// </summary>
-    /// <param name="mode"></param>
+    /// <param name="p"></param>
+    public void PlayApppointAnima(string p)
+    {
+       if(float.TryParse(p,out var pro))
+       {
+           InputManage.Instance.PlayApppointAnimEvent?.Invoke(pro);
+       }
+    }
     public void SelectModelMode(string mode)
     {
         if (mode == "1")
@@ -143,21 +146,25 @@ public class GetMessageFromIOS : MonoBehaviour
         }
 
     }
-  
+
     /// <summary>
-    /// ¼ÓÔØ¶¯»­µÄÁ´½Ó
+    /// è®¾ç½®ç¯å…‰å¼ºåº¦
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="inten"></param>
+    public void SetLightIntensity(string inten)
+    {
+        Debug.Log(inten); 
+        if(float.TryParse(inten,out var t))
+        {
+            
+            LightController.Instance.SetIntensity(t);
+        }
+    }
     public void SetAnimationPath(string path)
     {
         AssetLoadManager.Instance.LoadAnimation(path);
     }
 
-
-    /// <summary>
-    /// ÔİÍ£/²¥·Å ¶¯»­ play=True ²¥·Å  =FalseÔİÍ£
-    /// </summary>
-    /// <param name="play"></param>
     public void PlayAnimation(string play)
     {
         bool state = false;
@@ -172,21 +179,15 @@ public class GetMessageFromIOS : MonoBehaviour
 
         InputManage.Instance.PlayAnimationEvent?.Invoke(state);
     }
-
-    /// <summary>
-    /// Ïà»úÊÓ½Ç¹éÎ»
-    /// </summary>
     public void ResetCameraRotate()
     {
         InputManage.Instance.ResetCameraRotateEvent?.Invoke();
     }
 
-    /// <summary>
-    /// Ïà»úĞı×ªËø¶¨ÊÂ¼ş
-    /// </summary>
+   
     public void TurnOnModelRotateState(string state)
     {
-        if (state==Utils.OpenCameraRotateState)
+        if (state==Utils.OpenCameraRotateState) 
         {
            InputManage.Instance.TurnOnCameraRotateEvent?.Invoke(true);
         } 
@@ -196,11 +197,7 @@ public class GetMessageFromIOS : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ÉèÖÃµÆ¹âĞı×ª
-    /// </summary>
-    /// <param name="x">Ë®Æ½·½ÏòĞı×ª</param>
-    /// <param name="y">´¹Ö±·½ÏòĞı×ª</param>
+    
     public void SetLightMoveDirY(string y)
     {
         if (float.TryParse(y, out var dirY))
@@ -214,11 +211,7 @@ public class GetMessageFromIOS : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ÉèÖÃµÆ¹âĞı×ª
-    /// </summary>
-    /// <param name="x">Ë®Æ½·½ÏòĞı×ª</param>
-    /// <param name="y">´¹Ö±·½ÏòĞı×ª</param>
+  
     public void SetLightMoveDirX(string x)
     {
         if (float.TryParse(x, out var dirX) )
@@ -232,27 +225,20 @@ public class GetMessageFromIOS : MonoBehaviour
     }
 
     /// <summary>
-    /// »ñÈ¡µÆ¹âµÄĞı×ªĞÅÏ¢  
+    /// ï¿½ï¿½È¡ï¿½Æ¹ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Ï¢  
     /// </summary>
     public void GetLightInfo()
     {
         LightController.Instance.GetLightInfo();
     }
 
-    /// <summary>
-    /// ¸´Ô­µÆ¹âĞı×ª
-    /// </summary>
+
     public void ResetLightRotate()
     {
         LightController.Instance.ResetLight();
     }   
 
-    /// <summary>
-    /// ÉèÖÃµÆ¹âĞı×ª
-    /// </summary>
-    /// <param name="x">Ë®Æ½·½ÏòĞı×ª</param>
-    /// <param name="y">´¹Ö±·½ÏòĞı×ª</param>
-    public void SetLightMoveDirZ(string z)
+       public void SetLightMoveDirZ(string z)
     {
         if (float.TryParse(z, out var dirZ))
         {
@@ -265,27 +251,7 @@ public class GetMessageFromIOS : MonoBehaviour
         }
     }
 
-    ///// <summary>
-    ///// ÉèÖÃµÆ¹âĞı×ªÆ«ÒÆÁ¿ Ä¬ÈÏÎª 1
-    ///// </summary>
-    ///// <param name="o"></param>
-    //public void SetLightMoveOffset(string o)
-    //{
-    //    if (float.TryParse(o, out offset))
-    //    {
-    //        GameManager.Instance.lightController.SetOffSet(offset);
-    //    }
-    //    else
-    //    {
-    //        Debug.Log(">>>>>>>Get ios SetLightMoveOffset data error");
-
-    //    }
-    //}
-
-    /// <summary>
-    /// ÉèÖÃ·Ö²ãÏÔÊ¾Ä£ĞÍ   ´«Êä¸ñÊ½£º Head+true  (Ä£ĞÍÃû+ÉèÖÃ×´Ì¬)
-    /// </summary>
-    /// <param name="modelState"></param>
+   
     public void SetHeadLayerShow(string modelState)
     {   
        var m = modelState.Split('+');
@@ -299,32 +265,23 @@ public class GetMessageFromIOS : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ÖØÖÃÍ·²¿½á¹¹·Ö²ãÏÔÊ¾
-    /// </summary>
+   
     public void ResetHeadLayerShow()
     {
         InputManage.Instance.ResetHeadLayerShowEvent?.Invoke();
     }
-
-    /// <summary>
-    /// ¿ªÊ¼outline line=1 ¿ªÆô
-    /// </summary>
-    /// <param name="line"></param>
+    
     public void SetOutlineState(string line)
     {
         Debug.Log(">>>>>>>>Outline: " + line);
-        float lineState = 0;
-        if (float.TryParse(line,out lineState))
+         
+        if (float.TryParse(line,out var lineState))
         { 
           InputManage.Instance.OutLineStateEvent?.Invoke(lineState);
         }
     }
 
-    /// <summary>
-    /// ÉèÖÃ±ßÔµ¹â¿í¶È
-    /// </summary>
-    /// <param name="width"></param>
+    
     public void SetOutlineWidth(string width)
     {   
         if (float.TryParse(width, out var w))
@@ -333,13 +290,10 @@ public class GetMessageFromIOS : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ÉèÖÃÄ£ĞÍÍ¸Ã÷¶È
-    /// </summary>
-    /// <param name="alpha"></param>
+ 
     public void SetAlphaState(string alpha)
     {
-        Debug.Log(">>>>>>>>>>>>Alpha£º "+alpha);
+        Debug.Log(">>>>>>>>>>>>Alphaï¿½ï¿½ "+alpha);
         if (float.TryParse(alpha, out var alpahState))
         {
            InputManage.Instance.AlphaStateEvent?.Invoke(alpahState);
@@ -347,9 +301,7 @@ public class GetMessageFromIOS : MonoBehaviour
         
     }
     
-    /// <summary>
-    /// È¡Ïû¼ÓÔØÄ£ĞÍ
-    /// </summary>
+
     public void CancleLoadModel()
     {   
         InputManage.Instance.CancleLoadedModelEvent?.Invoke();

@@ -12,31 +12,6 @@ using TriLibCore.Samples;
 using TriLibCore.Mappers;
 using System.Threading;
 
-/*
- 1. ½«Ä£ĞÍÒÔ¼°ÌùÍ¼¶¼·Åµ½Ñ¹Ëõ°üÀïÃæ£¬ÏÈ½«·şÎñ¶ËµÄÎÄ¼şÏÂÔØµ½±¾µØ¡£
- 3. ½«Ä£ĞÍ½âÑ¹³öÀ´·ÅÖÃÔÚ³Ö¾Ã»¯Â·¾¶ÎÄ¼şÏÂ
- 2. Í¨¹ıTrilib¼ÓÔØ±¾µØÎÄ¼şµÄ·½Ê½½«Ä£ĞÍ¼ÓÔØ³öÀ´
- 3. ÉèÖÃÄ£ĞÍµÄÌùÍ¼
- 4. Èç¹ûÓĞÏà»úµÄ»°£¬ÅäÖÃ³õÊ¼Ïà»úµÄÎ»ÖÃ¡£
- 5. Èç¹ûÓĞ¶¯»­µÄ»°£¬½«¶¯»­Ò²·Åµ½³¡¾°ÖĞÀ´¡£
-
-    1.µã»÷ÄÄ¸öÎïÌå£¬ÄÄ¸öÎïÌå¾Í½øĞĞĞı×ª£¿£¿£¿
-
-    1. ËÙĞ´Ä¬Ğ´£¬×Ô´ø¶¯»­£¬·Å´óËõĞ¡Ä£ĞÍ£¬Ğı×ªÊÓ´°£¬¹âÔ´Ğı×ª£¬ĞèÒªoutLineĞ§¹û¡£
-    2. µ¥×é¾²Îï£¬×Ô´ø¶¯»­£¬¶àÖÖ²ÄÖÊ£¬ÊÓ´°Ğı×ª·Å´óËõĞ¡£¬¹âÔ´Ğı×ª£¬ĞèÒªoutLineĞ§¹û£¬ĞèÒªÍ¸Ã÷Ğ§¹û¡£
-    3. Ê¯¸à½á¹¹£¬ÈÎÒâĞı×ª£¬·Å´óËõĞ¡¹Û²ì£¬¹âÔ´Ğı×ª£¬ĞèÒªoutLineĞ§¹û¡£
-    4. Í·²¿½á¹¹£¬ÈÎÒâĞı×ª£¬·Å´óËõĞ¡¹Û²ì£¬¹âÔ´Ğı×ª£¬·ÖÆ¤·ô£¬¼¡Èâ£¬¹Ç÷À²ã¼¶½øĞĞ¹Û²ì£¬ĞèÒªoutLineĞ§¹û¡£
-
- */
-
-
-/*
-  Ä£ĞÍÀïÃæ´øÏà»úµÄ»°ÃüÃûÎª£ºCamera
-  Ä£ĞÍĞèÒªÌùÍ¼£¬ÀïÃæ´øÒ»ÕÅ mainTexture
-  Ä£ĞÍÆ¤·ô£¬¼¡Èâ£¬¹Ç÷À²ã¼¶½øĞĞ¹Û²ì£¬Ã¿²ãÃüÃûÎª Depth£¬»òÕß Depth_model£¬¿´ÒÔÉÏÁ½ÖÖÄÄ¸ö·½±ã
-  Ä£ĞÍ¿ÉÒÔ´ø¶¯»­
- */
-
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 {
@@ -52,11 +27,13 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     private void Start()
     {
-        baseModelPath = Application.persistentDataPath + "/Model";
+        baseModelPath =Path.Combine(Application.persistentDataPath,"Model") ;
         if (!Directory.Exists(baseModelPath))
         {
             Directory.CreateDirectory(baseModelPath);
-        }
+        } 
+
+        Debug.Log("baseModelPath: "+baseModelPath);
     }
 
     private void OnEnable()
@@ -100,13 +77,11 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     {
         UnLoadGameobject();
 
-        currentFilePath = baseModelPath +"/"+ FileUtils.GetFilenameWithoutExtension(webUrl);
-
-        currentModelPath = currentFilePath + "/Fbx/" + FileUtils.GetFilenameWithoutExtension(webUrl)+".fbx";
-
-        currentTextureDirectory = currentFilePath + "/Texture";
-
-        Debug.Log(currentFilePath); 
+        currentFilePath = Path.Combine(baseModelPath , FileUtils.GetFilenameWithoutExtension(webUrl));
+        currentModelPath =Path.Combine(currentFilePath,"Fbx",FileUtils.GetFilenameWithoutExtension(webUrl)+".fbx");
+        currentTextureDirectory = Path.Combine(currentFilePath,"Texture");
+        
+        Debug.Log(currentModelPath); 
         
         if (!File.Exists(currentModelPath))
         {
@@ -170,7 +145,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         }
         else
         {
-            Debug.Log(">>>>>>>>>: È±ÉÙÄ£ĞÍÎÄ¼ş---");
+            Debug.Log(">>>>>>>>>:Can't find current model "+currentModelPath);
         }
     }
 
@@ -237,11 +212,12 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
             if (unZip)
             {
-                #region ½âÑ¹Ëõ
+                #region è§£å‹ç¼©
                 FastZip zip = new FastZip();
                
                 if (FileUtils.GetFileExtension(filePath) == ".zip")
                 {
+                    
                     zip.ExtractZip(filePath, baseModelPath, "");
 
                 }
@@ -268,6 +244,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     private void OnLoad(AssetLoaderContext  loaderContext)
     {
+        loaderContext.RootGameObject.transform.localPosition=Vector3.zero;
         loaderContext.RootGameObject.SetActive(false);
     }
     
@@ -281,7 +258,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
         currentModel.SetActive(true);
     } 
-
+    
     private void OnProgress(AssetLoaderContext loaderContext, float progress)
     {
         Debug.Log(progress);
@@ -293,12 +270,4 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         Debug.Log(obj);
     }
     
-}
-
-/// <summary>
-/// ÌùÍ¼¶ÔÓ¦µÄÊôĞÔÃû
-/// </summary>
-public class TexturePropertyName
-{
-   
 }

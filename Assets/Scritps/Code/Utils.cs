@@ -2,7 +2,7 @@
 public class Utils  
 {
     /// <summary>
-    /// ÕâÊÇÏÖÔÚµÄÌùÍ¼ÃüÃû
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public const string TextureBaseMap= "BaseColor";
     public const string TextureNormalMap = "Normal";
@@ -14,7 +14,9 @@ public class Utils
     public const string Muscle= "Muscles";
     public const string Skin= "Skin";
     public const string Skull= "Skull";
-
+    public const string Fat= "Fat";
+    public const string Inside = "Inside";
+    
     public const string OpenCameraRotateState = "OpenRotate";
     public const string CloseCameraRotateState = "CloseRotate";
 
