@@ -8,7 +8,7 @@ public class InputManage : MonoSingleton<InputManage>
 
     public Material alphaMaterial;
     public UnityEvent<bool> PlayAnimationEvent;
-
+    
     public UnityEvent<float> AnimationLengthOfClipEvent;
 
     public UnityEvent<string, bool> SetHeadLayerShowEvent;

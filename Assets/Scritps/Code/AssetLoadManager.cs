@@ -11,6 +11,8 @@ using ICSharpCode.SharpZipLib.Zip;
 using TriLibCore.Samples;
 using TriLibCore.Mappers;
 using System.Threading;
+using UnityEngine.SceneManagement;
+using System.ComponentModel;
 
 
 public class AssetLoadManager : MonoSingleton<AssetLoadManager>
@@ -45,7 +47,38 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     void UnLoadGameobject()
     {
         if (currentModel != null)
+        { 
+            
             Destroy(currentModel);
+           
+        }
+
+         for(int i=0;i<totalTexture.Count;i++)
+         {
+            Destroy(totalTexture[i]);
+         }
+        totalTexture.Clear();
+               
+ try{
+        foreach( var texDict in allModelTexture)   
+        {
+             foreach(var tex in texDict.Value)
+             {
+                 if(tex.Value!=null)
+                 {
+                    Destroy(tex.Value);
+                 }
+            }
+        }
+
+        }
+    catch(Exception e)
+  {
+    Debug.Log(e);
+}
+        allModelTexture.Clear();
+        System.GC.Collect();
+        Resources.UnloadUnusedAssets();
     }
 
     public void CancleDownload()
@@ -53,30 +86,29 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         Debug.Log(">>>>>>>> Cancle loaded model");
         HttpManager.Instance.CancleDownload();
         assetLoaderContext.CancellationTokenSource.Cancel();
+
         UnLoadGameobject();
     }
-
-
+    
+    
     public void LoadAnimation(string animPath)
     {
         if (File.Exists(animPath))
         {
-            if (assetLoaderOptions == null)
-            {
-                assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
-                assetLoaderOptions.ImportCameras = true;
-            }
 
+               assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
+                assetLoaderOptions.ImportCameras = true;
+                //assetLoaderOptions.ImportNormals=true;
             assetLoaderContext = AssetLoader.LoadModelFromStream(File.OpenRead(animPath), FileUtils.GetShortFilename(animPath), FileUtils.GetFileExtension(animPath), LoadAnimation, null, OnProgress,
             OnError, gameObject, assetLoaderOptions, null, false);
         }
     }
 
-
+   
     public void DownModeFromWeb(string webUrl)
     {
         UnLoadGameobject();
-
+       
         currentFilePath = Path.Combine(baseModelPath , FileUtils.GetFilenameWithoutExtension(webUrl));
         currentModelPath =Path.Combine(currentFilePath,"Fbx",FileUtils.GetFilenameWithoutExtension(webUrl)+".fbx");
         currentTextureDirectory = Path.Combine(currentFilePath,"Texture");
@@ -110,6 +142,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
         {
             assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(true);
             assetLoaderOptions.ImportCameras = true;
+            
         }
 
         assetLoaderContext = AssetLoader.LoadModelFromStream(File.OpenRead(currentModelPath), FileUtils.GetShortFilename(currentModelPath), FileUtils.GetFileExtension(currentModelPath), OnLoad, OnMaterialLoad, OnProgress,
@@ -155,7 +188,12 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
 
     void LoadTexture()
     {
-
+         for(int i=0;i<totalTexture.Count;i++)
+         {
+            Destroy(totalTexture[i]);
+         }
+        totalTexture.Clear();
+               
         allModelTexture.Clear();
         if (!Directory.Exists(currentTextureDirectory))
             return;
@@ -167,8 +205,9 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             var texName = FileUtils.GetFilenameWithoutExtension(texPath);
             string[] TexNames = texName.Split('_');
             byte[] data = File.ReadAllBytes(texPath);
-            Texture2D texture = new Texture2D(1024, 1024);
+            Texture2D texture = new Texture2D(2048, 2048);
             texture.name = FileUtils.GetFilenameWithoutExtension(texPath);
+           
             if (texture.LoadImage(data)) 
             {
                 if (TexNames.Length == 2)
@@ -243,7 +282,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
     }
 
     private void OnLoad(AssetLoaderContext  loaderContext)
-    {
+    {   
         loaderContext.RootGameObject.transform.localPosition=Vector3.zero;
         loaderContext.RootGameObject.SetActive(false);
     }
@@ -255,8 +294,9 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
       
         var fileReference= currentModel.AddComponent<FileReferenceBinding>();
         fileReference.Init(loaderContext,allModelTexture);
-
         currentModel.SetActive(true);
+       
+             
     } 
     
     private void OnProgress(AssetLoaderContext loaderContext, float progress)

@@ -23,10 +23,9 @@ public class MaterialSetting
         material.name = name;
         OnOpenOutline = openOutLine;
     }
-
-
+    
     float minWidth = 0.01f;
-    float maxWidth = 0.5f;
+    float maxWidth =20f;
     public void SetOutlineWidth(float w)
     {
         w = Mathf.Clamp(w, minWidth, maxWidth);
@@ -50,7 +49,10 @@ public class MaterialSetting
     {
         if (HasProgrety(proprety))
         {
+            
             material.SetTexture(proprety, tex);
+            if(proprety==Utils.ShaderNormalMap)
+               material.EnableKeyword("_NORMALMAP");
             return true;
         }
 

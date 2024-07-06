@@ -9,7 +9,6 @@ public class GetMessageFromIOS : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void CallDownloadModelProgress(string modelName, string funcName);
-    
     public static void DownloadModelProgress(string modelName, string progress)
     {
         Debug.Log(modelName + " _Downprogress: " + progress);
@@ -20,7 +19,7 @@ public class GetMessageFromIOS : MonoBehaviour
         CallDownloadModelProgress(modelName, progress);
 
     }
-
+    
     [DllImport("__Internal")]
     private static extern void CallLoadModelProgress(string modelName,string progress);
    
@@ -56,7 +55,7 @@ public class GetMessageFromIOS : MonoBehaviour
     {
         CallLightRotateInfo(info);
     }
-
+    
 
     //------------------------------
 
@@ -68,7 +67,7 @@ public class GetMessageFromIOS : MonoBehaviour
     {
          #if UNITY_EDITOR
          return;
-         #endif
+         #endif 
         CallAnimationLengthOfClip(info);
 
     }
@@ -76,29 +75,29 @@ public class GetMessageFromIOS : MonoBehaviour
     float offset;
     Vector3 dir = new Vector3();
    
-
-   
+    
     public void SetModelurl(string url)
     {
         Debug.Log(">>>>>>>>>> Get Url From IOS:"+url);
         AssetLoadManager.Instance.DownModeFromWeb(url);
     }
     
-    public float timeline;
-    private void OnGUI1()
+    public string fileName;
+    private void OnGUI1() 
     {
+
         if (GUILayout.Button(">>>>>>>>>>load Model", GUILayout.Width(200), GUILayout.Height(50)))
         {
-            AssetLoadManager.Instance.DownModeFromWeb(@"file://"+Application.streamingAssetsPath + "/MultiCharsCentimeters.zip");
+            AssetLoadManager.Instance.DownModeFromWeb(@"file://"+Application.streamingAssetsPath + fileName);
         }
         if (GUILayout.Button(">>>>>>>>>>load Animation", GUILayout.Width(200), GUILayout.Height(50)))
         {
             SetAnimationPath(Application.streamingAssetsPath + "/coreapi.fbx");
         }
 
-        if (GUILayout.Button(">>>>>>>>>>Play Animation", GUILayout.Width(200), GUILayout.Height(50)))
+        if (GUILayout.Button(">>>>>>>>>>cancle scene", GUILayout.Width(200), GUILayout.Height(50)))
         {
-            PlayAnimation("True");
+            CancleLoadModel();
         }
         if (GUILayout.Button(">>>>>>>>>>Pause Animation" ,GUILayout.Width(200), GUILayout.Height(50)))
         {
@@ -115,11 +114,11 @@ public class GetMessageFromIOS : MonoBehaviour
 
          if (GUILayout.Button("PlayTime",GUILayout.Width(200), GUILayout.Height(50)))
         {
-             PlayApppointAnima(timeline.ToString());
+            // PlayApppointAnima(timeline.ToString());
         }
            if (GUILayout.Button("Intensity",GUILayout.Width(200), GUILayout.Height(50)))
         {
-             SetLightIntensity(timeline.ToString());
+             //SetLightIntensity(timeline.ToString());
         }
     }
     
@@ -134,19 +133,36 @@ public class GetMessageFromIOS : MonoBehaviour
            InputManage.Instance.PlayApppointAnimEvent?.Invoke(pro);
        }
     }
+
+    public void CheckActiveScene()
+    {
+        int count=0;
+           for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+             Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.isLoaded )
+            {
+               count++;
+            }
+          } 
+
+          print(">>>>>>>>>>> : active scene count:"+count);
+    }
+
     public void SelectModelMode(string mode)
     {
+        
         if (mode == "1")
         {
-            SceneManager.LoadScene(Utils.AnimationScene);
+               SceneManager.LoadScene(Utils.AnimationScene, LoadSceneMode.Single);
         }
         else if (mode == "0")
         {
-            SceneManager.LoadScene(Utils.ModelScene);
+               SceneManager.LoadScene(Utils.ModelScene, LoadSceneMode.Single);
         }
 
     }
-
+        
     /// <summary>
     /// 设置灯光强度
     /// </summary>
@@ -300,7 +316,7 @@ public class GetMessageFromIOS : MonoBehaviour
         }
         
     }
-    
+     
 
     public void CancleLoadModel()
     {   

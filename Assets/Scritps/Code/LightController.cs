@@ -26,19 +26,20 @@ public class LightController : MonoSingleton<LightController>
 
     public void SetIntensity(float inten)
     {
-        inten=Mathf.Clamp(inten,0.1f,5f);
+        inten=Mathf.Clamp(inten,0f,5f);
         directionalLight.intensity=inten;
     }
+    
      private void Update()
     {
-        //lightArrow.transform.rotation = directionalLight.transform.rotation;
+        
     }
-
+   
     public void GetLightInfo()
     {
-        GetMessageFromIOS.ReturnLightRotateInfo(GetLightRotation());
+       GetMessageFromIOS.ReturnLightRotateInfo(GetLightRotation());
     }
-
+    
     public void ResetLight()
     {
         directionalLight.transform.rotation = initQua;
@@ -49,7 +50,7 @@ public class LightController : MonoSingleton<LightController>
         var dir=  directionalLight.transform.rotation.eulerAngles;
         return dir.x + "_" + dir.y + "_" + dir.z;
     }
-    
+     
     public void Rotate(Vector3 dir)
     {   
         directionalLight.transform.Rotate(Vector3.right, dir.x,Space.World); 

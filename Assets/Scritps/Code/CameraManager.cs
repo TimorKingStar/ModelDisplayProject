@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class CameraManager : MonoSingleton<CameraManager>
 {
-    
-    SmoothOrbitCam smoothOrbitCam;
-    public SmoothOrbitViewchanger viewchanger;
+    CameraOrbit cameraOrbit;
     public override void Init()
     {  
-       
-       smoothOrbitCam = GetComponent<SmoothOrbitCam>();
+       cameraOrbit = GetComponent<CameraOrbit>();
     }
     
     void OnEnable()
@@ -19,50 +16,21 @@ public class CameraManager : MonoSingleton<CameraManager>
         InputManage.Instance.ResetCameraRotateEvent.AddListener( ResetTransform);
         InputManage.Instance.TurnOnCameraRotateEvent.AddListener(SetRotateState);
     }
-    public float defaletDis;
-
-    public bool rotateState;
-    void Start()
-    {
-        smoothOrbitCam.distance=defaletDis;
-    }
-
+      
+      public void SetCameraInfo(Transform root,Transform trans , ICamera camera )
+      {
+           cameraOrbit.SetCameraInfo(root,trans,camera);
+      }
+    
      public void ResetTransform()
      {
-        viewchanger.TriggerViewChange();
+        cameraOrbit.ResetCameraInfo();
      }
         
      public void SetRotateState(bool state)
      {
-        smoothOrbitCam.useable=state;
+         cameraOrbit.SetCameraState(state);
      }
-
-#region  待定
-
-      GameObject camGO;
-     public void SetCameraInfo(Transform cam,Transform root)
-     {
-         if(camGO==null)
-         {
-              camGO=new GameObject("CAM");
-         }
-         
-         camGO.transform.position=cam.position+new Vector3(0,-1,0);
-         camGO.transform.rotation=QuaterConverter(cam.rotation);
-         var angle =camGO.transform.rotation.eulerAngles;
-         Debug.Log("angle: "+angle.ToString());
-         //viewchanger.Init(angle,Vector3.Distance(camGO.transform.position,root.position));
-     }
-     
-      Quaternion QuaterConverter(Quaternion qua)
-     {
-        var angle = qua.eulerAngles;
-        Vector3 targetAngle = new Vector3();
-        targetAngle.x = angle.z;
-        targetAngle.z = angle.x * -1;
-        targetAngle.y = angle.y - 90f;
-        return Quaternion.Euler(targetAngle);
-     }
-     #endregion
+    
      
 }

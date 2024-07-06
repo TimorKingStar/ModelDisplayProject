@@ -68,7 +68,7 @@ public class FileReferenceBinding : MonoBehaviour
         var layerBind = _rootModel.AddComponent<FileLayerBinding>();
         layerBind.InitLayer(loaderContext);
         SetFileReferenceBinding(layerBind); 
-
+        
         var mat = _rootModel.AddComponent<MaterialCreator>();
         listMaterials = mat.InitMaterial(allModelTexture);
 
@@ -76,7 +76,8 @@ public class FileReferenceBinding : MonoBehaviour
         {
             if (m.Key.Name== Utils.CameraPosition)
             {
-                _cameraTrans = m.Value.transform;
+                _cameraTrans = m.Value.transform; 
+                Debug.Log("xxxxxxxxx: "+_cameraTrans.localPosition.x);
             }
 
             var render = m.Value.GetComponent<Renderer>();
@@ -93,15 +94,15 @@ public class FileReferenceBinding : MonoBehaviour
             }
         }
         
-        //CameraManager.Instance.SetCameraInfo(_cameraTrans,_rootModel.transform);
+       
 
         ICamera tempCamera=null;
         if (loaderContext.RootModel.AllCameras.Count>0)
         {
            tempCamera = loaderContext.RootModel.AllCameras[0];
         }
-        
-        
+          
+         CameraManager.Instance.SetCameraInfo(_rootModel.transform,_cameraTrans,tempCamera);
 
         var camera = GetComponentInChildren<Camera>();
         if (camera != null)
@@ -115,7 +116,23 @@ public class FileReferenceBinding : MonoBehaviour
             Destroy(lod);
         }
     }
+     
 
+     public Transform GetBrither(Transform camera)
+     {
+         if(camera.parent!=null)
+         {
+           foreach (Transform child in camera.parent)
+           {
+            
+            if (child != camera)
+            {
+               return child;
+            }
+            }
+         }
+        return _rootModel.transform;
+     }
 }
 
  

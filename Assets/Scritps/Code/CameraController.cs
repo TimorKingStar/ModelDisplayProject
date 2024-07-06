@@ -49,7 +49,7 @@ public class CameraController : MonoSingleton<CameraController>
       }
 
    }
-
+   
     public void SetCameraInfo(GameObject obj, Transform trans = null, ICamera camera = null)
     {
         _defaltPosition=transform.position;
@@ -85,7 +85,7 @@ public class CameraController : MonoSingleton<CameraController>
         targetAngle.y = angle.y - 90f;
         return Quaternion.Euler(targetAngle);
     }
-
+    
     ICamera ICameraInfo;
     void SetCameraInfo()
     {
@@ -101,9 +101,9 @@ public class CameraController : MonoSingleton<CameraController>
 
         intervalDistance = Vector3.Distance(beforeInitPos, currentObj.transform.position);
 
-        targetRotationX = beforeInitQua.eulerAngles.y;
-        targetRotationY = beforeInitQua.eulerAngles.x;
-
+        targetRotationY = beforeInitQua.eulerAngles.y;
+        targetRotationX = beforeInitQua.eulerAngles.x;
+         
         targetRotationY = Mathf.Clamp(targetRotationY, minVerticalAngle, maxVerticalAngle);
         var ration= Quaternion.Euler(targetRotationY, targetRotationX, 0f);
         mainCamera.transform.rotation = ration;

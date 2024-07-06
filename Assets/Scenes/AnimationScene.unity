@@ -248,7 +248,7 @@ Transform:
   m_Children:
   - {fileID: 1730419402}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &537010428
 GameObject:
@@ -342,8 +342,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 566951779}
-  - component: {fileID: 566951781}
   - component: {fileID: 566951780}
+  - component: {fileID: 566951781}
   m_Layer: 0
   m_Name: CameraSystem
   m_TagString: Untagged
@@ -364,7 +364,7 @@ Transform:
   m_Children:
   - {fileID: 537010431}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &566951780
 MonoBehaviour:
@@ -378,9 +378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1ed6c65eb8194756877b7d48f12a40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewchanger: {fileID: 1474453701}
-  defaletDis: 7
-  rotateState: 0
 --- !u!114 &566951781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,114 +387,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 566951778}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2e86eb1f3a797047811c2c4557b5479, type: 3}
+  m_Script: {fileID: 11500000, guid: 39d2fe68d8ab222448a594b6c0e3a24c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 401938200}
-  useable: 1
-  EnableOrbiting: 1
-  orbitKey: 323
-  xSpeed: 4
-  ySpeed: 2
-  distance: 7
-  distanceMin: 0.25
-  distanceMax: 12
-  limitToXAxis: 0
-  limitToYAxis: 0
-  yMinLimit: -20
-  yMaxLimit: 80
-  xMinLimit: 0
-  xMaxLimit: 0
-  smoothTime: 8
-  rotation: {x: 0, y: 0, z: 0, w: 0}
-  velocityX: 0
-  velocityY: 0
-  enableZooming: 1
+  target: {fileID: 401938199}
+  initDistance: 3
+  minDistance: 2
+  maxDistance: 20
+  distance: 0
+  xSpeed: 6
+  ySpeed: 3
+  panSpeed: 0.2
   zoomSpeed: 0.5
-  enablePanning: 1
-  targetPanCam: {fileID: 0}
-  panKey: 324
-  panSpeed: 0.1
-  LimitPan: 0
-  PanLimitsLeftRight: {x: -9, y: 9}
-  PanLimitsUpDown: {x: -5, y: 5}
-  xOffset: 0
-  yOffset: 0
-  enableAutomaticOrbiting: 0
-  orbitingSpeed: 1
-  NoObjectsBetween: 0
-  EnableGroundHovering: 0
-  GroundHoverDistance: 5
-  UiBlocksInteraction: 1
-  InputSelection: 0
-  tempPanPosition: {x: 0, y: 0, z: 0}
+  useable: 1
   velocityPanX: 0
   velocityPanY: 0
---- !u!1001 &672247473
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3492473940665866676, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_Name
-      value: LightArrowPosition
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866676, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_RootOrder
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473940665866683, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3492473942102063467, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 537010430}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2264a4854a5b2de48886f019bb23a6af, type: 3}
+  targetPanCam: {fileID: 0}
+  xRotation: 0
+  yRotation: 0
+  initX: 0
+  initY: 0
+  trans: {fileID: 0}
 --- !u!1 &1011954831
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,7 +618,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1474453701
 MonoBehaviour:
@@ -722,10 +632,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c2d2f2f015af7745a2bc7b5b7671bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CamRotation: {x: 0, y: 0, z: 0}
-  CamDistance: 7
-  CamPanValues: {x: 0, y: 0}
-  CamMovingSpeed: 1
 --- !u!1 &1571268630
 GameObject:
   m_ObjectHideFlags: 0
