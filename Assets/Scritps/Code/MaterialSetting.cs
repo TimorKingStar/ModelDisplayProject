@@ -45,17 +45,19 @@ public class MaterialSetting
             material.SetFloat(Utils.ShaderEnableOutline, state ? 1 : 0);
     }
 
-    public bool SetTexture(string proprety,Texture tex)
+    public bool SetTexture(string proprety,Texture2D tex)
     {
         if (HasProgrety(proprety))
         {
+            if (proprety == Utils.ShaderNormalMap)
+            {
+                tex = ConvertToNormalMap(tex);
+            }
             
             material.SetTexture(proprety, tex);
-            if(proprety==Utils.ShaderNormalMap)
-               material.EnableKeyword("_NORMALMAP");
             return true;
         }
-
+        
         return false;
     }
 
@@ -64,4 +66,15 @@ public class MaterialSetting
         return p == Utils.ShaderBaseMap || p == Utils.ShaderNormalMap || p == Utils.ShaderRoughnessMap;
     }
 
+    private Texture2D ConvertToNormalMap(Texture2D source)
+    {
+       Texture2D normalMap = new Texture2D(source.width, source.height, TextureFormat.RGB565, false);
+        normalMap.SetPixels(source.GetPixels());
+        normalMap.Apply(false, true);
+         
+        normalMap.wrapMode = TextureWrapMode.Repeat;
+        normalMap.filterMode = FilterMode.Bilinear;
+        normalMap.anisoLevel = 1;
+        return normalMap; 
+    }
 }

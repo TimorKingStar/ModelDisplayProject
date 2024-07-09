@@ -125,6 +125,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             }).OnError(e => { Debug.LogError(e); }).
             OnProgress(p=> 
             {
+
                 GetMessageFromIOS.DownloadModelProgress(FileUtils.GetFilenameWithoutExtension(webUrl), p.ToString());
 
             });
@@ -205,7 +206,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
             var texName = FileUtils.GetFilenameWithoutExtension(texPath);
             string[] TexNames = texName.Split('_');
             byte[] data = File.ReadAllBytes(texPath);
-            Texture2D texture = new Texture2D(2048, 2048);
+            Texture2D texture = new Texture2D(1024, 1024);
             texture.name = FileUtils.GetFilenameWithoutExtension(texPath);
            
             if (texture.LoadImage(data)) 
@@ -219,6 +220,7 @@ public class AssetLoadManager : MonoSingleton<AssetLoadManager>
                         var d = new Dictionary<string, Texture2D>();
                         allModelTexture.Add(modelName, d);
                     }
+                    
                     allModelTexture[modelName].Add(property, texture);
                     totalTexture.Add(texture);
                 }

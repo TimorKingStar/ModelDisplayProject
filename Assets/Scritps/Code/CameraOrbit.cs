@@ -47,15 +47,6 @@ public class CameraOrbit : MonoBehaviour
     }
     
     
-    private void OnGUI1()
-    {
-        GUILayout.Space(30);
-        if (GUILayout.Button("ResetCamera", GUILayout.Width(200), GUILayout.Height(30)))
-        {
-            yRotation+=10;
-        }
-    }
-    
     ICamera _camera;
     Vector3 beforeInitPos;
     Quaternion beforeInitQua;
@@ -131,16 +122,20 @@ public class CameraOrbit : MonoBehaviour
         transform.position = ration * new Vector3(0.0f, 0.0f, - distance)+target.transform.position;
        
        //这里可以实现
-       //mainCamera.transform.position=beforeInitPos;
-       //mainCamera.transform.rotation=beforeInitQua;
+       // mainCamera.transform.position=beforeInitPos;
+       
+       // mainCamera.transform.rotation=beforeInitQua;
 
-
+        //velocityPanX = beforeInitPos.x;
+       // velocityPanY = beforeInitPos.y;
+        
         ///计算之后的默认位置
         afterinitpos = transform.position;
         afterInitQua = transform.rotation;
         
 
     }
+    
     
     
     Quaternion QuaterConverter(Quaternion qua)
@@ -250,6 +245,7 @@ public class CameraOrbit : MonoBehaviour
                 else
                 {
 
+                    
                     float veloDeltaX = (touchZero.deltaPosition.x + touchOne.deltaPosition.x) / 2;
                     float veloDeltaY = (touchZero.deltaPosition.y + touchOne.deltaPosition.y) / 2;
 
